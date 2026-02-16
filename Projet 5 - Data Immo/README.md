@@ -25,3 +25,11 @@ PostgreSQL nécessite des chemins absolus pour importer les fichiers. Avant d'ex
 COPY temp_valeurs_foncieres 
 FROM 'C:/Votre_Chemin/portfolio/data/valeurs-foncieres.csv' 
 DELIMITER ',' CSV HEADER;
+```
+
+### 3. Ordre d'exécution
+Exécutez les scripts dans l'ordre suivant :
+1. scripts_sql/dataimmo_lake/create_dataimmo_lake.sql
+2. scripts_sql/dataimmo_lake/insert_dataimmo_lake.sql
+3. scripts_sql/dataimmo_warehouse/create_dataimmo_warehouse.sql
+4. scripts_sql/dataimmo_warehouse/insert_dataimmo_warehouse.sql
