@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "sanitoral_dashboard"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "387e8ac7-ae27-43cc-b901-273e63882241"
+  }
+}

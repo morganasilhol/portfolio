@@ -1,0 +1,152 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 893.74174833517236
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 2242.5805684986558,
+            "y": 1432.814212871041
+          },
+          "nodeIndex": "Actual_Costs",
+          "nodeLineageTag": "7205e073-5207-42df-a2c9-e689b7c12d2a",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 5
+        },
+        {
+          "location": {
+            "x": 2279.8100220557426,
+            "y": 1838.0302942488979
+          },
+          "nodeIndex": "Actual_Delivrables",
+          "nodeLineageTag": "f6811337-94c1-416a-88c6-62a525dbd6b7",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 2
+        },
+        {
+          "location": {
+            "x": 2253.473740587493,
+            "y": 1634.8803903171067
+          },
+          "nodeIndex": "Actual_Duration",
+          "nodeLineageTag": "67a43802-88fb-4c85-91bb-e16f472dab4a",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 3
+        },
+        {
+          "location": {
+            "x": 847.28496520335045,
+            "y": 1463.8797206558284
+          },
+          "nodeIndex": "Country_Profiles",
+          "nodeLineageTag": "49a65efc-c3e4-4c90-a258-9801cc08cdb3",
+          "size": {
+            "height": 167,
+            "width": 234
+          },
+          "zIndex": 6
+        },
+        {
+          "location": {
+            "x": 277.15832095217212,
+            "y": 1385.8619031316287
+          },
+          "nodeIndex": "Project_Type",
+          "nodeLineageTag": "de2d5f87-0394-49e3-a69f-8d1916a642bf",
+          "size": {
+            "height": 162.78689537523383,
+            "width": 234
+          },
+          "zIndex": 8
+        },
+        {
+          "location": {
+            "x": 834.905973112775,
+            "y": 1722.9253183614428
+          },
+          "nodeIndex": "Projects_Locations",
+          "nodeLineageTag": "50a757d5-1f6c-449a-80b3-558aa99a8a34",
+          "size": {
+            "height": 145,
+            "width": 292
+          },
+          "zIndex": 4
+        },
+        {
+          "location": {
+            "x": 587.20584288180328,
+            "y": 1358.422719459687
+          },
+          "nodeIndex": "Date_Table",
+          "nodeLineageTag": "e74719fc-7f67-4049-bb1b-8862d8b12527",
+          "size": {
+            "height": 145,
+            "width": 234
+          },
+          "zIndex": 7
+        },
+        {
+          "location": {
+            "x": 1163.8523220832865,
+            "y": 1743.231644619173
+          },
+          "nodeIndex": "Mesures",
+          "nodeLineageTag": "acd111ce-f9ec-4bc6-ab04-6ae0a406640b",
+          "size": {
+            "height": 463.62688300000059,
+            "width": 234
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 510.09876509870639,
+            "y": 1632.0993165864784
+          },
+          "nodeIndex": "Project_Phase",
+          "nodeLineageTag": "93d5e13d-1ba3-43d3-b783-991f06a05b57",
+          "size": {
+            "height": 549.200405774525,
+            "width": 234
+          },
+          "zIndex": 9
+        },
+        {
+          "location": {
+            "x": 2286.6517011035703,
+            "y": 777.02547723297232
+          },
+          "nodeIndex": "User_Assignments",
+          "nodeLineageTag": "c72466b1-c466-4502-b713-d92032b02af2",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "Toutes les tables",
+      "zoomValue": 79.553182037699742,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "Toutes les tables",
+  "defaultDiagram": "Toutes les tables"
+}

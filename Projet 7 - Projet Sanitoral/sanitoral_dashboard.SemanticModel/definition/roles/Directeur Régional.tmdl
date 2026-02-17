@@ -1,0 +1,7 @@
+role 'Directeur Régional'
+	modelPermission: read
+
+	tablePermission Country_Profiles = [Region] = LOOKUPVALUE('User_Assignments'[Region], 'User_Assignments'[Email], USERPRINCIPALNAME())
+
+	annotation PBI_Id = f6655b52848440de8047f643b87bffa3
+

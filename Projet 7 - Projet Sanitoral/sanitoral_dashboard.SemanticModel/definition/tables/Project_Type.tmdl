@@ -1,0 +1,40 @@
+table Project_Type
+	lineageTag: de2d5f87-0394-49e3-a69f-8d1916a642bf
+
+	column Project_ID
+		dataType: string
+		lineageTag: abff7f06-16cb-411e-b21c-826adece29a4
+		summarizeBy: none
+		sourceColumn: Project_ID
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+	column Project_Type
+		dataType: string
+		lineageTag: 2d675424-aed8-47dd-9036-75d6bc26f75e
+		summarizeBy: none
+		sourceColumn: Project_Type
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Project_Type = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\Users\Morgi\Desktop\OpenClassrooms Projets\Projet 7 - Power BI\Projet 7 - Projet Sanitoral\data\sanitoral_data.xlsx")),
+				    #"Project type_sheet" = Source{[Item="Project type",Kind="Sheet"]}[Data],
+				    FilterNullAndWhitespace = each List.Select(_, each _ <> null and (not (_ is text) or Text.Trim(_) <> "")),
+				    #"Dernières lignes supprimées" = Table.RemoveLastN(#"Project type_sheet", each try List.IsEmpty(List.Skip(FilterNullAndWhitespace(Record.FieldValues(_)), 1)) otherwise false),
+				    #"Premières lignes supprimées" = Table.Skip(#"Dernières lignes supprimées", each try List.IsEmpty(List.Skip(FilterNullAndWhitespace(Record.FieldValues(_)), 1)) otherwise false),
+				    #"En-têtes promus" = Table.PromoteHeaders(#"Premières lignes supprimées", [PromoteAllScalars=true]),
+				    #"Type modifié" = Table.TransformColumnTypes(#"En-têtes promus",{{"Project ID", Int64.Type}, {"Project Type", type text}}),
+				    #"Colonnes renommées" = Table.RenameColumns(#"Type modifié",{{"Project Type", "Project_Type"}, {"Project ID", "Project_ID"}})
+				in
+				    #"Colonnes renommées"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

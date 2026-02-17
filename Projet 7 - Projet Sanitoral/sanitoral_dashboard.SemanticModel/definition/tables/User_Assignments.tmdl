@@ -1,0 +1,58 @@
+table User_Assignments
+	lineageTag: c72466b1-c466-4502-b713-d92032b02af2
+
+	column Email
+		dataType: string
+		lineageTag: de2308be-6566-44cf-81f3-d1ccfddedeb5
+		summarizeBy: none
+		sourceColumn: Email
+
+		annotation SummarizationSetBy = Automatic
+
+	column Nom
+		dataType: string
+		lineageTag: 17cd840b-7395-4789-a425-dbda88136dee
+		summarizeBy: none
+		sourceColumn: Nom
+
+		annotation SummarizationSetBy = Automatic
+
+	column Role_Type
+		dataType: string
+		lineageTag: b66e0ee1-53fb-4ad3-b83c-a49f8d43e542
+		summarizeBy: none
+		sourceColumn: Role_Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column Region
+		dataType: string
+		lineageTag: 786b356a-4e2c-4ffb-95d7-23326a4b6ae9
+		summarizeBy: none
+		sourceColumn: Region
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country
+		dataType: string
+		lineageTag: d58c0a8e-85f0-4b79-8d5c-b6890d859a44
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	partition User_Assignments = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\Morgi\Desktop\OpenClassrooms Projets\Projet 7 - Power BI\Projet 7 - Projet Sanitoral\data\User_Assignments.csv"),[Delimiter=";", Columns=5, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Type modifié" = Table.TransformColumnTypes(Source,{{"Column1", type text}, {"Column2", type text}, {"Column3", type text}, {"Column4", type text}, {"Column5", type text}}),
+				    #"En-têtes promus" = Table.PromoteHeaders(#"Type modifié", [PromoteAllScalars=true]),
+				    #"Type modifié1" = Table.TransformColumnTypes(#"En-têtes promus",{{"Email", type text}, {"Nom", type text}, {"Role_Type", type text}, {"Region", type text}, {"Country", type text}})
+				in
+				    #"Type modifié1"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

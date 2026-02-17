@@ -1,0 +1,435 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.5.0/schema.json",
+  "name": "8ef6d08e163d596ac44a",
+  "position": {
+    "x": 26,
+    "y": 241,
+    "z": 1000,
+    "height": 279,
+    "width": 1245,
+    "tabOrder": 2000
+  },
+  "visual": {
+    "visualType": "customGantt3E4C07C6049F43778D09D3DD5677C29C",
+    "query": {
+      "queryState": {
+        "Tasks": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Project_Phase"
+                    }
+                  },
+                  "Property": "Phase"
+                }
+              },
+              "queryRef": "Project.Phase",
+              "nativeQueryRef": "Phase"
+            }
+          ]
+        },
+        "Groups": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Project_Phase"
+                    }
+                  },
+                  "Property": "Project_ID"
+                }
+              },
+              "queryRef": "Project.Project_ID",
+              "nativeQueryRef": "Project_ID"
+            }
+          ]
+        },
+        "TaskStart": {
+          "projections": [
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Project_Phase"
+                        }
+                      },
+                      "Property": "Start_Date"
+                    }
+                  },
+                  "Function": 3
+                }
+              },
+              "queryRef": "Min(Project.Start_Date)",
+              "nativeQueryRef": "Start_Date (le plus ancien)"
+            }
+          ]
+        },
+        "BaselineStart": {
+          "projections": [
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Project_Phase"
+                        }
+                      },
+                      "Property": "Start_Date"
+                    }
+                  },
+                  "Function": 3
+                }
+              },
+              "queryRef": "Min(Project.Start_Date)",
+              "nativeQueryRef": "Start_Date (le plus ancien)"
+            }
+          ]
+        },
+        "BaselineFinish": {
+          "projections": [
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Project_Phase"
+                        }
+                      },
+                      "Property": "Planned_End_Date"
+                    }
+                  },
+                  "Function": 3
+                }
+              },
+              "queryRef": "Min(Project.End_Date_Planned)",
+              "nativeQueryRef": "End_Date_Planned (le plus ancien)"
+            }
+          ]
+        },
+        "TaskFinish": {
+          "projections": [
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Project_Phase"
+                        }
+                      },
+                      "Property": "Actual_End_Date"
+                    }
+                  },
+                  "Function": 3
+                }
+              },
+              "queryRef": "Min(Project.End_Date)",
+              "nativeQueryRef": "End_Date (le plus ancien)"
+            }
+          ]
+        },
+        "Flag": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Project_Phase"
+                    }
+                  },
+                  "Property": "Cost_Over_Budget_15%"
+                }
+              },
+              "queryRef": "Project.Cost_15perc_More_Than_Planned",
+              "nativeQueryRef": "Cost_15perc_Over_Budget"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Project_Phase"
+                    }
+                  },
+                  "Property": "Late"
+                }
+              },
+              "queryRef": "Project.Late",
+              "nativeQueryRef": "Late"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "flagSettings": [
+        {
+          "properties": {
+            "menu": {
+              "expr": {
+                "Literal": {
+                  "Value": "'outlines'"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "fontUnchanged": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "fontWeight": {
+              "expr": {
+                "Literal": {
+                  "Value": "'bold'"
+                }
+              }
+            },
+            "outlineUnchanged": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "outlineColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 9,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Project.Cost_15perc_More_Than_Planned"
+          }
+        },
+        {
+          "properties": {
+            "fontUnchanged": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "fontStyle": {
+              "expr": {
+                "Literal": {
+                  "Value": "'normal'"
+                }
+              }
+            },
+            "fontWeight": {
+              "expr": {
+                "Literal": {
+                  "Value": "'normal'"
+                }
+              }
+            },
+            "outlineUnchanged": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "outlineColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 9,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "outlineWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "3D"
+                }
+              }
+            },
+            "size": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Project.Late"
+          }
+        }
+      ],
+      "timelineSettings": [
+        {
+          "properties": {
+            "interval": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
+                }
+              }
+            },
+            "labels": {
+              "expr": {
+                "Literal": {
+                  "Value": "'quarters'"
+                }
+              }
+            },
+            "fiscalYears": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "taskSettings": [
+        {
+          "properties": {
+            "outlined": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "children": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "legendSettings": [
+        {
+          "properties": {
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "placement": {
+              "expr": {
+                "Literal": {
+                  "Value": "'bottom-right'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "keepLayerOrder": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": -0.5
+                    }
+                  }
+                }
+              }
+            },
+            "radius": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

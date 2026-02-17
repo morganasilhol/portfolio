@@ -1,0 +1,26 @@
+table Date_Table
+	lineageTag: e74719fc-7f67-4049-bb1b-8862d8b12527
+
+	column Date
+		formatString: General Date
+		lineageTag: 6cc9bb36-2e42-4064-840c-c51f5b15ced7
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		variation Variation
+			isDefault
+			relationship: f5b8385b-b6ad-4eac-8446-25c0bfa23730
+			defaultHierarchy: LocalDateTable_e0256f7e-12dd-4d18-86f0-0c9a8899076a.'Hiérarchie de dates'
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Date_Table = calculated
+		mode: import
+		source = ```
+				
+				    CALENDAR(MIN(Project_Phase[Start_Date]), MAX(Project_Phase[Actual_End_Date]))
+				```
+
+	annotation PBI_Id = d89e090fae30486f8cf69e93f736fd48
+

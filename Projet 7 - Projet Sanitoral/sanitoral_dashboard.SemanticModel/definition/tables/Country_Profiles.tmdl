@@ -1,0 +1,47 @@
+table Country_Profiles
+	lineageTag: 49a65efc-c3e4-4c90-a258-9801cc08cdb3
+
+	column Country
+		dataType: string
+		lineageTag: cb5616dc-b7a4-4a63-86d4-b026da94dcac
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	column Region
+		dataType: string
+		lineageTag: 8ecc97cf-70cd-481b-8f6c-1974533cbd42
+		summarizeBy: none
+		sourceColumn: Region
+
+		annotation SummarizationSetBy = Automatic
+
+	column Type
+		dataType: string
+		lineageTag: aad2a0bc-fb7b-40aa-a973-8c1c8027f529
+		summarizeBy: none
+		sourceColumn: Type
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Country_Profiles = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\Users\Morgi\Desktop\OpenClassrooms Projets\Projet 7 - Power BI\Projet 7 - Projet Sanitoral\data\sanitoral_data.xlsx")),
+				    Country_Profiles_sheet = Source{[Item="Country_Profiles",Kind="Sheet"]}[Data],
+				    FilterNullAndWhitespace = each List.Select(_, each _ <> null and (not (_ is text) or Text.Trim(_) <> "")),
+				    #"Premières lignes supprimées" = Table.Skip(Country_Profiles_sheet, each try List.IsEmpty(List.Skip(FilterNullAndWhitespace(Record.FieldValues(_)), 1)) otherwise false),
+				    #"Autres colonnes supprimées" = Table.SelectColumns(#"Premières lignes supprimées", List.Select(Table.ColumnNames(#"Premières lignes supprimées"), each try not List.IsEmpty(FilterNullAndWhitespace(Table.Column(#"Premières lignes supprimées", _))) otherwise true)),
+				    #"Lignes vides supprimées" = Table.SelectRows(#"Autres colonnes supprimées", each not List.IsEmpty(FilterNullAndWhitespace(Record.FieldValues(_)))),
+				    #"Type modifié" = Table.TransformColumnTypes(#"Lignes vides supprimées",{{"Column1", type text}, {"Column2", type text}, {"Column3", type text}}),
+				    #"En-têtes promus" = Table.PromoteHeaders(#"Type modifié", [PromoteAllScalars=true]),
+				    #"Type modifié1" = Table.TransformColumnTypes(#"En-têtes promus",{{"Country", type text}, {"Region", type text}, {"Type", type text}})
+				in
+				    #"Type modifié1"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

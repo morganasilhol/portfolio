@@ -1,0 +1,17 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.5.0/schema.json",
+  "name": "277a91c5e99063871522",
+  "position": {
+    "x": 82.576350449019628,
+    "y": 69.162561576354676,
+    "z": 6000,
+    "height": 473.49753694581284,
+    "width": 914.07389585639908,
+    "tabOrder": 8000
+  },
+  "visualGroup": {
+    "displayName": "Groupe Maj data",
+    "groupMode": "ScaleMode"
+  },
+  "isHidden": true
+}

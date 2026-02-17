@@ -1,0 +1,5 @@
+role 'Directeur Général'
+	modelPermission: read
+
+	annotation PBI_Id = 7186156fcd9e413e9e67d10ee683dfde
+

@@ -1,0 +1,44 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.5.0/schema.json",
+  "name": "72c62df210a410ed6e8a",
+  "position": {
+    "x": 25.54323725055432,
+    "y": 255.43237250554321,
+    "z": 8000,
+    "height": 437.07317073170731,
+    "width": 1227.9674796747966,
+    "tabOrder": 6000
+  },
+  "visual": {
+    "visualType": "qnaVisual",
+    "objects": {
+      "suggestions": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "hiddenProperties": [
+        {
+          "properties": {
+            "savedUtterance": {
+              "expr": {
+                "Literal": {
+                  "Value": "'top phases by total cost overrun'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

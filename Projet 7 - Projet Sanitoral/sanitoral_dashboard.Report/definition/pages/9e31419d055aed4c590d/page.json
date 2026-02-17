@@ -1,0 +1,22 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.0.0/schema.json",
+  "name": "9e31419d055aed4c590d",
+  "displayName": "Details",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "pageBinding": {
+    "name": "303ed9d8d4b8009a5580",
+    "type": "Default",
+    "parameters": []
+  },
+  "visibility": "HiddenInViewMode",
+  "type": "Tooltip",
+  "visualInteractions": [
+    {
+      "source": "8ef6d08e163d596ac44a",
+      "target": "5816411e4bed51d526de",
+      "type": "NoFilter"
+    }
+  ]
+}

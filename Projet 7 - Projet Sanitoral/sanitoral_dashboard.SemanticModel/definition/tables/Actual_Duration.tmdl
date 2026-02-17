@@ -1,0 +1,60 @@
+table Actual_Duration
+	isHidden
+	lineageTag: 67a43802-88fb-4c85-91bb-e16f472dab4a
+
+	column Project_ID
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 4ccc10cb-fa9e-45af-8d19-cd18f19b6767
+		summarizeBy: count
+		sourceColumn: Project_ID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Phase
+		dataType: string
+		isHidden
+		lineageTag: 44f05335-9ef3-43cd-a4b2-a552186b84b7
+		summarizeBy: none
+		sourceColumn: Phase
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Actual_Duration
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 1b95d59a-ed6a-4e54-aca8-681424a765f1
+		summarizeBy: sum
+		sourceColumn: Actual_Duration
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Actual_Duration = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\Users\Morgi\Desktop\OpenClassrooms Projets\Projet 7 - Power BI\Projet 7 - Projet Sanitoral\data\sanitoral_data.xlsx")),
+				    Actual_Duration_sheet = Source{[Item="Actual_Duration",Kind="Sheet"]}[Data],
+				    FilterNullAndWhitespace = each List.Select(_, each _ <> null and (not (_ is text) or Text.Trim(_) <> "")),
+				    #"Dernières lignes supprimées" = Table.RemoveLastN(Actual_Duration_sheet, each try List.IsEmpty(List.Skip(FilterNullAndWhitespace(Record.FieldValues(_)), 1)) otherwise false),
+				    #"Premières lignes supprimées" = Table.Skip(#"Dernières lignes supprimées", each try List.IsEmpty(List.Skip(FilterNullAndWhitespace(Record.FieldValues(_)), 1)) otherwise false),
+				    #"En-têtes promus" = Table.PromoteHeaders(#"Premières lignes supprimées", [PromoteAllScalars=true]),
+				    #"Type modifié" = Table.TransformColumnTypes(#"En-têtes promus",{{"Project", Int64.Type}, {"Phase", type text}, {"Actual_Duration", Int64.Type}}),
+				    #"Colonnes renommées" = Table.RenameColumns(#"Type modifié",{{"Project", "Project_ID"}})
+				in
+				    #"Colonnes renommées"
+
+	changedProperty = IsHidden
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

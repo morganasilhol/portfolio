@@ -1,0 +1,35 @@
+relationship 28062475-06fc-4c67-a580-ef0944c8bbb3
+	fromColumn: Project_Phase.Project_ID
+	toColumn: Project_Type.Project_ID
+
+relationship 51206927-53db-41e7-b1ca-98b2fe0919af
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Project_Phase.Planned_End_Date
+	toColumn: LocalDateTable_63f5d132-bc8f-4c6a-8481-83770daeb3b2.Date
+
+relationship fdc2f3a1-ef55-6771-5217-2d3a82714331
+	fromColumn: Project_Phase.Project_ID
+	toColumn: Projects_Locations.Project_ID
+
+relationship fa3d8fb4-3c83-392b-8d15-becaa4c2c211
+	fromColumn: Projects_Locations.Country
+	toColumn: Country_Profiles.Country
+
+relationship 3d71a4f0-282c-4254-86de-8abc337f1c68
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Project_Phase.Actual_End_Date
+	toColumn: LocalDateTable_6605a367-93fe-4cb8-9c27-b7e428f5c3b3.Date
+
+relationship f5b8385b-b6ad-4eac-8446-25c0bfa23730
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Date_Table.Date
+	toColumn: LocalDateTable_e0256f7e-12dd-4d18-86f0-0c9a8899076a.Date
+
+relationship 4c59fe81-43bf-0189-334b-48ea9ed1dd0d
+	fromColumn: Project_Phase.Start_Date
+	toColumn: Date_Table.Date
+
+relationship AutoDetected_10eca948-de25-46e3-9afd-9acc207d6153
+	fromColumn: User_Assignments.Country
+	toColumn: Country_Profiles.Country
+

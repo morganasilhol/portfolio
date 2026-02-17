@@ -1,0 +1,268 @@
+table Project_Phase
+	lineageTag: 93d5e13d-1ba3-43d3-b783-991f06a05b57
+
+	column Project_ID
+		dataType: string
+		lineageTag: 40012075-a614-4b5c-a6b8-5fc482953116
+		summarizeBy: none
+		sourceColumn: Project_ID
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+	column Phase
+		dataType: string
+		lineageTag: 7e859ce1-f354-4b4f-8016-cbd9256e9d5d
+		summarizeBy: none
+		sourceColumn: Phase
+
+		annotation SummarizationSetBy = Automatic
+
+	column Start_Date
+		dataType: dateTime
+		formatString: dd/mm/yy
+		lineageTag: ec46c46a-a1de-4169-9abb-28e50c0f5054
+		summarizeBy: none
+		sourceColumn: Start_Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column Planned_Duration
+		dataType: int64
+		formatString: 0
+		lineageTag: 282a845c-0d4e-4d74-8273-a40d36a31164
+		summarizeBy: sum
+		sourceColumn: Planned_Duration
+
+		annotation SummarizationSetBy = Automatic
+
+	column Planned_Cost
+		dataType: int64
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 51cccd4e-eb5c-4ee4-813b-ca65f25e6abf
+		summarizeBy: sum
+		sourceColumn: Planned_Cost
+
+		annotation SummarizationSetBy = Automatic
+
+	column Planned_Deliverables
+		dataType: int64
+		formatString: 0
+		lineageTag: a22ed3eb-72fb-4042-96fe-f4e8c18d022d
+		summarizeBy: sum
+		sourceColumn: Planned_Deliverables
+
+		annotation SummarizationSetBy = Automatic
+
+	column Actual_Cost
+		dataType: int64
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 1b220919-22af-4f4a-8882-d5fee0daa6d7
+		summarizeBy: sum
+		sourceColumn: Actual_Cost
+
+		annotation SummarizationSetBy = Automatic
+
+	column Actual_Deliverables
+		dataType: int64
+		formatString: 0
+		lineageTag: eb13657c-d84e-423a-af84-4be339150a93
+		summarizeBy: sum
+		sourceColumn: Actual_Deliverables
+
+		annotation SummarizationSetBy = Automatic
+
+	column Actual_Duration
+		dataType: int64
+		formatString: 0
+		lineageTag: 3202f9a7-1d06-418c-9a85-2e6dc50745c3
+		summarizeBy: sum
+		sourceColumn: Actual_Duration
+
+		annotation SummarizationSetBy = Automatic
+
+	column Planned_End_Date = [Start_Date] + [Planned_Duration]
+		dataType: dateTime
+		formatString: dd/mm/yy
+		lineageTag: 50b8265e-e10b-47f1-969a-2102aaa75637
+		summarizeBy: none
+
+		variation Variation
+			isDefault
+			relationship: 51206927-53db-41e7-b1ca-98b2fe0919af
+			defaultHierarchy: LocalDateTable_63f5d132-bc8f-4c6a-8481-83770daeb3b2.'Hiérarchie de dates'
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column Project_ID_Phase = "Project " & Project_Phase[Project_ID] & " - " & Project_Phase[Phase]
+		lineageTag: dd70627f-6fd5-41b0-869a-6edf78bd5286
+		summarizeBy: none
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cost_Over_Budget_15% = ```
+			
+			IF(
+			    (Project_Phase[Actual_Cost] > Project_Phase[Planned_Cost]) && 
+			    ((Project_Phase[Actual_Cost] - Project_Phase[Planned_Cost]) / Project_Phase[Planned_Cost] > 0.15), 
+			    1, 
+			    0
+			)
+			```
+		lineageTag: 45c02288-a222-4ffd-b016-e7f0ea82ff3c
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Duration_Over_15% = ```
+			
+			IF(
+			    (Project_Phase[Actual_Duration] > Project_Phase[Planned_Duration]) && 
+			    ((Project_Phase[Actual_Duration] - Project_Phase[Planned_Duration]) / Project_Phase[Planned_Duration] > 0.15), 
+			    1, 
+			    0
+			)
+			```
+		formatString: 0
+		lineageTag: 7a8775c3-5b86-4a99-9169-c8d7a1993615
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column Deliverables_Under_15% = ```
+			
+			IF(
+			    (Project_Phase[Actual_Deliverables] < Project_Phase[Planned_Deliverables]) && 
+			    ((Project_Phase[Planned_Deliverables] - Project_Phase[Actual_Deliverables]) / Project_Phase[Actual_Deliverables] > 0.15), 
+			    1, 
+			    0
+			)
+			```
+		formatString: 0
+		lineageTag: 8e39556d-a830-47a5-a119-9746ec1fd5c4
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column Late = ```
+			
+			IF(
+			    (Project_Phase[Deliverables_Under_15%] = 1) && 
+			    ((Project_Phase[Duration_Over_15%] = 1)), 
+			    1, -- Yes
+			    0 -- No
+			)
+			```
+		formatString: 0
+		lineageTag: 35a2f572-8161-46f8-a3ad-f3b08b1cc7c9
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column Actual_End_Date = [Start_Date] + [Actual_Duration]
+		formatString: General Date
+		lineageTag: a99e359a-4d80-4b25-8b36-3571fec745c4
+		summarizeBy: none
+
+		variation Variation
+			isDefault
+			relationship: 3d71a4f0-282c-4254-86de-8abc337f1c68
+			defaultHierarchy: LocalDateTable_6605a367-93fe-4cb8-9c27-b7e428f5c3b3.'Hiérarchie de dates'
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column Complete = ```
+			
+			IF(
+			    (Project_Phase[Actual_Deliverables] >= Project_Phase[Planned_Deliverables]), 
+			    1, 
+			    0
+			)
+			```
+		formatString: 0
+		lineageTag: 49f4b988-e674-482f-8104-12e6ca2f6d97
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column Nb_Days_Late = ```
+			
+			IF(
+			    (Project_Phase[Actual_Duration] > Project_Phase[Planned_Duration]), 
+			    Project_Phase[Actual_Duration] - Project_Phase[Planned_Duration], 
+			    0
+			)
+			```
+		dataType: int64
+		formatString: 0
+		lineageTag: e468e583-1d1e-41f9-995b-ffd6f896c535
+		summarizeBy: sum
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cost_overrun = ```
+			
+			IF(
+			    (Project_Phase[Actual_Cost] > Project_Phase[Planned_Cost]), 
+			    Project_Phase[Actual_Cost] - Project_Phase[Planned_Cost], 
+			    0
+			)
+			```
+		formatString: 0
+		lineageTag: 6448ba86-1cdb-445c-8749-20f8f43b822d
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Project_Phase = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\Users\Morgi\Desktop\OpenClassrooms Projets\Projet 7 - Power BI\Projet 7 - Projet Sanitoral\data\sanitoral_data.xlsx")),
+				    Projects_plans_sheet = Source{[Item="Projects_plans",Kind="Sheet"]}[Data],
+				    FilterNullAndWhitespace = each List.Select(_, each _ <> null and (not (_ is text) or Text.Trim(_) <> "")),
+				    #"Dernières lignes supprimées" = Table.RemoveLastN(Projects_plans_sheet, each try List.IsEmpty(List.Skip(FilterNullAndWhitespace(Record.FieldValues(_)), 1)) otherwise false),
+				    #"Premières lignes supprimées" = Table.Skip(#"Dernières lignes supprimées", each try List.IsEmpty(List.Skip(FilterNullAndWhitespace(Record.FieldValues(_)), 1)) otherwise false),
+				    #"En-têtes promus" = Table.PromoteHeaders(#"Premières lignes supprimées", [PromoteAllScalars=true]),
+				    #"Type modifié" = Table.TransformColumnTypes(#"En-têtes promus",{{"Project ID", Int64.Type}, {"Phase", type text}, {"Start Date", type date}, {"Planned_Duration", Int64.Type}, {"Planned_Cost", Int64.Type}, {"Planned_Delivrable", Int64.Type}}),
+				    #"Colonnes renommées" = Table.RenameColumns(#"Type modifié",{{"Project ID", "Project_ID"}, {"Start Date", "Start_Date"}}),
+				    #"Requêtes fusionnées" = Table.NestedJoin(#"Colonnes renommées", {"Project_ID", "Phase"}, Actual_Costs, {"Projet_ID", "Phase"}, "Actual_Costs", JoinKind.FullOuter),
+				    #"Requêtes fusionnées1" = Table.NestedJoin(#"Requêtes fusionnées", {"Project_ID", "Phase"}, Actual_Delivrables, {"Project_ID", "Phase"}, "Actual_Delivrables", JoinKind.LeftOuter),
+				    #"Requêtes fusionnées2" = Table.NestedJoin(#"Requêtes fusionnées1", {"Project_ID", "Phase"}, Actual_Duration, {"Project_ID", "Phase"}, "Actual_Duration", JoinKind.LeftOuter),
+				    #"Actual_Costs développé" = Table.ExpandTableColumn(#"Requêtes fusionnées2", "Actual_Costs", {"Projet_ID", "Phase", "Actual_Cost"}, {"Actual_Costs.Projet_ID", "Actual_Costs.Phase", "Actual_Costs.Actual_Cost"}),
+				    #"Actual_Delivrables développé" = Table.ExpandTableColumn(#"Actual_Costs développé", "Actual_Delivrables", {"Project_ID", "Phase", "Actual_Deliverables"}, {"Actual_Delivrables.Project_ID", "Actual_Delivrables.Phase", "Actual_Delivrables.Actual_Deliverables"}),
+				    #"Actual_Duration développé" = Table.ExpandTableColumn(#"Actual_Delivrables développé", "Actual_Duration", {"Project_ID", "Phase", "Actual_Duration"}, {"Actual_Duration.Project_ID", "Actual_Duration.Phase", "Actual_Duration.Actual_Duration"}),
+				    #"Colonnes renommées1" = Table.RenameColumns(#"Actual_Duration développé",{{"Actual_Duration.Actual_Duration", "Actual_Duration"}}),
+				    #"Colonnes supprimées" = Table.RemoveColumns(#"Colonnes renommées1",{"Actual_Duration.Phase", "Actual_Duration.Project_ID"}),
+				    #"Colonnes renommées2" = Table.RenameColumns(#"Colonnes supprimées",{{"Actual_Delivrables.Actual_Deliverables", "Actual_Deliverables"}}),
+				    #"Colonnes supprimées1" = Table.RemoveColumns(#"Colonnes renommées2",{"Actual_Delivrables.Phase", "Actual_Delivrables.Project_ID"}),
+				    #"Colonnes renommées3" = Table.RenameColumns(#"Colonnes supprimées1",{{"Actual_Costs.Actual_Cost", "Actual_Cost"}}),
+				    #"Colonnes supprimées2" = Table.RemoveColumns(#"Colonnes renommées3",{"Actual_Costs.Projet_ID", "Actual_Costs.Phase"}),
+				    #"Colonnes permutées" = Table.ReorderColumns(#"Colonnes supprimées2",{"Project_ID", "Phase", "Start_Date", "Planned_Duration", "Actual_Duration", "Planned_Cost", "Actual_Cost", "Planned_Delivrable", "Actual_Deliverables"}),
+				    #"Colonnes renommées4" = Table.RenameColumns(#"Colonnes permutées",{{"Planned_Delivrable", "Planned_Deliverables"}})
+				in
+				    #"Colonnes renommées4"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

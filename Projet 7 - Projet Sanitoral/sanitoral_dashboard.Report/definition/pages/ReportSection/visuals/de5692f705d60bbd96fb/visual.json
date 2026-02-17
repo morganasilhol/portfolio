@@ -1,0 +1,16 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.5.0/schema.json",
+  "name": "de5692f705d60bbd96fb",
+  "position": {
+    "x": 121.83471074380165,
+    "y": 50.088815285726476,
+    "z": 5000,
+    "height": 587.47376101107329,
+    "width": 831.16528925619832,
+    "tabOrder": 7000
+  },
+  "visualGroup": {
+    "displayName": "Groupe Product Strategy Canvas",
+    "groupMode": "ScaleMode"
+  }
+}

@@ -1,0 +1,7 @@
+role 'Directeur Pays'
+	modelPermission: read
+
+	tablePermission Country_Profiles = [Country] = LOOKUPVALUE('User_Assignments'[Country], 'User_Assignments'[Email], USERPRINCIPALNAME())
+
+	annotation PBI_Id = 6579029580c8476d9343864ad068de71
+

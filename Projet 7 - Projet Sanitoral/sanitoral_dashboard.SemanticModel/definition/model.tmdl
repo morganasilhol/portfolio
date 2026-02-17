@@ -1,0 +1,35 @@
+model Model
+	culture: fr-FR
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: fr-FR
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["Project_Phase","Project_Type","Actual_Costs","Actual_Duration","Actual_Delivrables","Projects_Locations","Country_Profiles","Mesures","User_Assignments"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table Project_Phase
+ref table DateTableTemplate_60c38dbc-fc2b-47ea-938c-bcc295d2a9a6
+ref table Project_Type
+ref table Actual_Costs
+ref table Actual_Duration
+ref table Actual_Delivrables
+ref table Projects_Locations
+ref table Country_Profiles
+ref table Date_Table
+ref table LocalDateTable_63f5d132-bc8f-4c6a-8481-83770daeb3b2
+ref table Mesures
+ref table LocalDateTable_6605a367-93fe-4cb8-9c27-b7e428f5c3b3
+ref table LocalDateTable_e0256f7e-12dd-4d18-86f0-0c9a8899076a
+ref table User_Assignments
+
+ref role 'Directeur Général'
+ref role 'Directeur Régional'
+ref role 'Directeur Pays'
+
+ref cultureInfo fr-FR
+
