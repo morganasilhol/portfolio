@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.knime.org/2008/09/XMLConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.knime.org/2008/09/XMLConfig http://www.knime.org/XMLConfig_2008_09.xsd" key="settings.xml">
+    <entry key="node_file" type="xstring" value="settings.xml"/>
+    <config key="flow_stack"/>
+    <config key="internal_node_subsettings">
+        <entry key="memory_policy" type="xstring" value="CacheSmallInMemory"/>
+    </config>
+    <config key="model">
+        <config key="renamings">
+            <config key="0">
+                <entry key="oldName" type="xstring" value="id_salarié"/>
+                <entry key="newName" type="xstring" value="id_salarie"/>
+            </config>
+            <config key="1">
+                <entry key="oldName" type="xstring" value="Ancienneté_an"/>
+                <entry key="newName" type="xstring" value="anciennete_an"/>
+            </config>
+            <config key="2">
+                <entry key="oldName" type="xstring" value="Distance domicile/Travail"/>
+                <entry key="newName" type="xstring" value="distance_domicile_travail"/>
+            </config>
+            <config key="3">
+                <entry key="oldName" type="xstring" value="Service"/>
+                <entry key="newName" type="xstring" value="service"/>
+            </config>
+            <config key="4">
+                <entry key="oldName" type="xstring" value="Work_accident"/>
+                <entry key="newName" type="xstring" value="work_accident"/>
+            </config>
+            <config key="5">
+                <entry key="oldName" type="xstring" value="Niveau de satisfaction"/>
+                <entry key="newName" type="xstring" value="niveau_satisfaction"/>
+            </config>
+            <config key="6">
+                <entry key="oldName" type="xstring" value="Contrat"/>
+                <entry key="newName" type="xstring" value="contrat"/>
+            </config>
+            <config key="7">
+                <entry key="oldName" type="xstring" value="Durée hebdo"/>
+                <entry key="newName" type="xstring" value="duree_hebdo"/>
+            </config>
+            <config key="8">
+                <entry key="oldName" type="xstring" value="Salaire base mensuel"/>
+                <entry key="newName" type="xstring" value="salaire_base_mensuel"/>
+            </config>
+            <config key="9">
+                <entry key="oldName" type="xstring" value="%variable_moyen"/>
+                <entry key="newName" type="xstring" value="variable_moy_prc"/>
+            </config>
+            <config key="10">
+                <entry key="oldName" type="xstring" value="Augmentation"/>
+                <entry key="newName" type="xstring" value="augmentation"/>
+            </config>
+            <config key="11">
+                <entry key="oldName" type="xstring" value="Promotion"/>
+                <entry key="newName" type="xstring" value="promotion"/>
+            </config>
+            <config key="12">
+                <entry key="oldName" type="xstring" value="Sexe"/>
+                <entry key="newName" type="xstring" value="sexe"/>
+            </config>
+            <config key="13">
+                <entry key="oldName" type="xstring" value="Etat Civil"/>
+                <entry key="newName" type="xstring" value="etat_civil"/>
+            </config>
+            <config key="14">
+                <entry key="oldName" type="xstring" value="Congé maternité A-1"/>
+                <entry key="newName" type="xstring" value="conge_mat_N-1"/>
+            </config>
+            <config key="15">
+                <entry key="oldName" type="xstring" value="Enfants"/>
+                <entry key="newName" type="xstring" value="enfants"/>
+            </config>
+            <config key="16">
+                <entry key="oldName" type="xstring" value="Age"/>
+                <entry key="newName" type="xstring" value="age"/>
+            </config>
+        </config>
+    </config>
+    <config key="variables"/>
+    <entry key="customDescription" type="xstring" isnull="true" value=""/>
+    <entry key="state" type="xstring" value="CONFIGURED"/>
+    <entry key="factory" type="xstring" value="org.knime.base.node.preproc.column.renamer.ColumnRenamerNodeFactory"/>
+    <entry key="node-name" type="xstring" value="Column Renamer"/>
+    <entry key="node-bundle-name" type="xstring" value="KNIME Base Nodes"/>
+    <entry key="node-bundle-symbolic-name" type="xstring" value="org.knime.base"/>
+    <entry key="node-bundle-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
+    <entry key="node-bundle-version" type="xstring" value="5.4.1.v202503071316"/>
+    <entry key="node-feature-name" type="xstring" value="KNIME Base nodes"/>
+    <entry key="node-feature-symbolic-name" type="xstring" value="org.knime.features.base.feature.group"/>
+    <entry key="node-feature-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
+    <entry key="node-feature-version" type="xstring" value="5.4.1.v202503071316"/>
+    <config key="factory_settings"/>
+    <entry key="name" type="xstring" value="Column Renamer"/>
+    <entry key="hasContent" type="xboolean" value="false"/>
+    <entry key="isInactive" type="xboolean" value="false"/>
+    <config key="ports">
+        <config key="port_1">
+            <entry key="index" type="xint" value="1"/>
+            <entry key="port_dir_location" type="xstring" isnull="true" value=""/>
+        </config>
+    </config>
+    <config key="filestores">
+        <entry key="file_store_location" type="xstring" isnull="true" value=""/>
+        <entry key="file_store_id" type="xstring" isnull="true" value=""/>
+    </config>
+</config>
