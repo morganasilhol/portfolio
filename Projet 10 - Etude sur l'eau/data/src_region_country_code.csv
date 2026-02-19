@@ -1,0 +1,232 @@
+region,country,country_code_alpha2,country_code_alpha3,country_code_numeric
+Europe,Albania,AL,ALB,8
+Europe,Andorra,AD,AND,20
+Europe,Armenia,AM,ARM,51
+Western Pacific,Australia,AU,AUS,36
+Europe,Austria,AT,AUT,40
+Europe,Azerbaijan,AZ,AZE,31
+Eastern Mediterranean,Bahrain,BH,BHR,48
+South-East Asia,Bangladesh,BD,BGD,50
+Europe,Belarus,BY,BLR,112
+Europe,Belgium,BE,BEL,56
+South-East Asia,Bhutan,BT,BTN,64
+Europe,Bosnia and Herzegovina,BA,BIH,70
+Africa,Botswana,BW,BWA,72
+Americas,Brazil,BR,BRA,76
+Europe,Bulgaria,BG,BGR,100
+Western Pacific,Cambodia,KH,KHM,116
+Americas,Canada,CA,CAN,124
+Americas,Chile,CL,CHL,152
+Western Pacific,China,CN,CHN,156
+Americas,Colombia,CO,COL,170
+Africa,Congo,CG,COG,178
+Americas,Costa Rica,CR,CRI,188
+Europe,Croatia,HR,HRV,191
+Europe,Cyprus,CY,CYP,196
+Europe,Czechia,CZ,CZE,203
+Africa,Côte d'Ivoire,CI,CIV,384
+South-East Asia,Democratic People's Republic of Korea,KP,PRK,408
+Europe,Denmark,DK,DNK,208
+Americas,Ecuador,EC,ECU,218
+Americas,El Salvador,SV,SLV,222
+Europe,Estonia,EE,EST,233
+Africa,Eswatini,SZ,SWZ,748
+Africa,Ethiopia,ET,ETH,231
+Europe,Finland,FI,FIN,246
+Europe,France,FR,FRA,250
+Africa,Gambia,GM,GMB,270
+Europe,Georgia,GE,GEO,268
+Europe,Germany,DE,DEU,276
+Africa,Ghana,GH,GHA,288
+Europe,Greece,GR,GRC,300
+Americas,Grenada,GD,GRD,308
+Americas,Guatemala,GT,GTM,320
+Americas,Honduras,HN,HND,340
+Europe,Hungary,HU,HUN,348
+Europe,Iceland,IS,ISL,352
+South-East Asia,India,IN,IND,356
+Eastern Mediterranean,Iran (Islamic Republic of),IR,IRN,364
+Eastern Mediterranean,Iraq,IQ,IRQ,368
+Europe,Ireland,IE,IRL,372
+Europe,Israel,IL,ISR,376
+Europe,Italy,IT,ITA,380
+Western Pacific,Japan,JP,JPN,392
+Eastern Mediterranean,Jordan,JO,JOR,400
+Europe,Kazakhstan,KZ,KAZ,398
+Africa,Kenya,KE,KEN,404
+Eastern Mediterranean,Kuwait,KW,KWT,414
+Europe,Kyrgyzstan,KG,KGZ,417
+Western Pacific,Lao People's Democratic Republic,LA,LAO,418
+Europe,Latvia,LV,LVA,428
+Eastern Mediterranean,Lebanon,LB,LBN,422
+Europe,Lithuania,LT,LTU,440
+Europe,Luxembourg,LU,LUX,442
+Western Pacific,Malaysia,MY,MYS,458
+Europe,Malta,MT,MLT,470
+Americas,Mexico,MX,MEX,484
+Europe,Monaco,MC,MCO,492
+Western Pacific,Mongolia,MN,MNG,496
+Europe,Montenegro,ME,MNE,499
+Eastern Mediterranean,Morocco,MA,MAR,504
+South-East Asia,Nepal,NP,NPL,524
+Europe,Netherlands,NL,NLD,528
+Western Pacific,New Zealand,NZ,NZL,554
+Americas,Nicaragua,NI,NIC,558
+Africa,Nigeria,NG,NGA,566
+Western Pacific,Niue,NU,NIU,570
+Europe,Republic of North Macedonia,MK,MKD,807
+Europe,Norway,NO,NOR,578
+Eastern Mediterranean,Oman,OM,OMN,512
+Eastern Mediterranean,Pakistan,PK,PAK,586
+Americas,Paraguay,PY,PRY,600
+Americas,Peru,PE,PER,604
+Western Pacific,Philippines,PH,PHL,608
+Europe,Poland,PL,POL,616
+Europe,Portugal,PT,PRT,620
+Eastern Mediterranean,Qatar,QA,QAT,634
+Western Pacific,Republic of Korea,KR,KOR,410
+Europe,Republic of Moldova,MD,MDA,498
+Europe,Romania,RO,ROU,642
+Europe,Russian Federation,RU,RUS,643
+Africa,Rwanda,RW,RWA,646
+Western Pacific,Samoa,WS,WSM,882
+Europe,San Marino,SM,SMR,674
+Europe,Serbia,RS,SRB,688
+Africa,Sierra Leone,SL,SLE,694
+Western Pacific,Singapore,SG,SGP,702
+Europe,Slovakia,SK,SVK,703
+Europe,Slovenia,SI,SVN,705
+Africa,South Africa,ZA,ZAF,710
+Europe,Spain,ES,ESP,724
+South-East Asia,Sri Lanka,LK,LKA,144
+Europe,Sweden,SE,SWE,752
+Europe,Switzerland,CH,CHE,756
+Europe,Tajikistan,TJ,TJK,762
+Eastern Mediterranean,Tunisia,TN,TUN,788
+Europe,Turkmenistan,TM,TKM,795
+Western Pacific,Tuvalu,TV,TUV,798
+Africa,Uganda,UG,UGA,800
+Europe,Ukraine,UA,UKR,804
+Europe,United Kingdom of Great Britain and Northern Ireland,GB,GBR,826
+Africa,United Republic of Tanzania,TZ,TZA,834
+Americas,United States of America,US,USA,840
+Americas,Uruguay,UY,URY,858
+Europe,Uzbekistan,UZ,UZB,860
+Western Pacific,Vanuatu,VU,VUT,548
+Africa,Zambia,ZM,ZMB,894
+Eastern Mediterranean,Afghanistan,AF,AFG,4
+Africa,Algeria,DZ,DZA,12
+Africa,Angola,AO,AGO,24
+Americas,Antigua and Barbuda,AG,ATG,28
+Americas,Argentina,AR,ARG,32
+Americas,Bahamas,BS,BHS,44
+Americas,Barbados,BB,BRB,52
+Americas,Belize,BZ,BLZ,84
+Africa,Benin,BJ,BEN,204
+Americas,Bolivia (Plurinational State of),BO,BOL,68
+Western Pacific,Brunei Darussalam,BN,BRN,96
+Africa,Burkina Faso,BF,BFA,854
+Africa,Burundi,BI,BDI,108
+Africa,Cabo Verde,CV,CPV,132
+Africa,Cameroon,CM,CMR,120
+Africa,Central African Republic,CF,CAF,140
+Africa,Chad,TD,TCD,148
+Africa,Comoros,KM,COM,174
+Western Pacific,Cook Islands,CK,COK,184
+Americas,Cuba,CU,CUB,192
+Africa,Democratic Republic of the Congo,CD,COD,180
+Eastern Mediterranean,Djibouti,DJ,DJI,262
+Americas,Dominica,DM,DMA,212
+Americas,Dominican Republic,DO,DOM,214
+Eastern Mediterranean,Egypt,EG,EGY,818
+Africa,Equatorial Guinea,GQ,GNQ,226
+Africa,Eritrea,ER,ERI,232
+Western Pacific,Fiji,FJ,FJI,242
+Africa,Gabon,GA,GAB,266
+Africa,Guinea,GN,GIN,324
+Africa,Guinea-Bissau,GW,GNB,624
+Americas,Guyana,GY,GUY,328
+Americas,Haiti,HT,HTI,332
+South-East Asia,Indonesia,ID,IDN,360
+Americas,Jamaica,JM,JAM,388
+Western Pacific,Kiribati,KI,KIR,296
+Africa,Lesotho,LS,LSO,426
+Africa,Liberia,LR,LBR,430
+Eastern Mediterranean,Libya,LY,LBY,434
+Africa,Madagascar,MG,MDG,450
+Africa,Malawi,MW,MWI,454
+South-East Asia,Maldives,MV,MDV,462
+Africa,Mali,ML,MLI,466
+Western Pacific,Marshall Islands,MH,MHL,584
+Africa,Mauritania,MR,MRT,478
+Africa,Mauritius,MU,MUS,480
+Western Pacific,Micronesia (Federated States of),FM,FSM,583
+Africa,Mozambique,MZ,MOZ,508
+South-East Asia,Myanmar,MM,MMR,104
+Africa,Namibia,NA,NAM,516
+Western Pacific,Nauru,NR,NRU,520
+Africa,Niger,NE,NER,562
+Western Pacific,Palau,PW,PLW,585
+Americas,Panama,PA,PAN,591
+Western Pacific,Papua New Guinea,PG,PNG,598
+Americas,Saint Kitts and Nevis,KN,KNA,659
+Americas,Saint Lucia,LC,LCA,662
+Americas,Saint Vincent and the Grenadines,VC,VCT,670
+Africa,Sao Tome and Principe,ST,STP,678
+Eastern Mediterranean,Saudi Arabia,SA,SAU,682
+Africa,Senegal,SN,SEN,686
+Africa,Seychelles,SC,SYC,690
+Western Pacific,Solomon Islands,SB,SLB,90
+Eastern Mediterranean,Somalia,SO,SOM,706
+Africa,South Sudan,SS,SSD,728
+Eastern Mediterranean,Sudan,SD,SDN,729
+Americas,Suriname,SR,SUR,740
+Eastern Mediterranean,Syrian Arab Republic,SY,SYR,760
+South-East Asia,Thailand,TH,THA,764
+South-East Asia,Timor-Leste,TL,TLS,626
+Africa,Togo,TG,TGO,768
+Western Pacific,Tonga,TO,TON,776
+Americas,Trinidad and Tobago,TT,TTO,780
+Europe,Turkey,TR,TUR,792
+Eastern Mediterranean,United Arab Emirates,AE,ARE,784
+Americas,Venezuela (Bolivarian Republic of),VE,VEN,862
+Western Pacific,Viet Nam,VN,VNM,704
+Eastern Mediterranean,Yemen,YE,YEM,887
+Africa,Zimbabwe,ZW,ZWE,716
+Eastern Mediterranean,Palestine,PS,PSE,275
+Americas,Puerto Rico,PR,PRI,630
+Western Pacific,"China, Taiwan Province of",TW,TWN,158
+Americas,Bermuda,BM,BMU,60
+Western Pacific,American Samoa,AS,ASM,16
+Western Pacific,"China, Hong Kong SAR",HK,HKG,344
+Americas,Greenland,GL,GRL,304
+Americas,Aruba,AW,ABW,533
+Americas,Curaçao,CW,CUW,531
+Americas,Guadeloupe,GP,GLP,312
+Western Pacific,Guam,GU,GUM,316
+Americas,Martinique,MQ,MTQ,474
+Africa,Mayotte,YT,MYT,175
+Western Pacific,New Caledonia,NC,NCL,540
+Africa,Réunion,RE,REU,638
+Americas,United States Virgin Islands,VI,VIR,850
+Africa,Western Sahara,EH,ESH,732
+Americas,Anguilla,AI,AIA,660
+Americas,"Bonaire, Sint Eustatius and Saba",BQ,BES,535
+Americas,British Virgin Islands,VG,VGB,92
+Americas,Cayman Islands,KY,CYM,136
+Americas,Falkland Islands (Malvinas),FK,FLK,238
+Europe,Faroe Islands,FO,FRO,234
+Europe,Gibraltar,GI,GIB,292
+Europe,Holy See,VA,VAT,336
+Europe,Isle of Man,IM,IMN,833
+Europe,Liechtenstein,LI,LIE,438
+Americas,Montserrat,MS,MSR,500
+Western Pacific,Northern Mariana Islands,MP,MNP,580
+Africa,"Saint Helena, Ascension and Tristan da Cunha",SH,SHN,654
+Americas,Saint Pierre and Miquelon,PM,SPM,666
+Americas,Sint Maarten  (Dutch part),SX,SXM,534
+Americas,Turks and Caicos Islands,TC,TCA,796
+Western Pacific,Wallis and Futuna Islands,WF,WLF,876
+Americas,Saint Barthélemy,BL,BLM,652
+Americas,Saint-Martin (French part),MF,MAF,663
+Europe,Kosovo,XK,XKX,412

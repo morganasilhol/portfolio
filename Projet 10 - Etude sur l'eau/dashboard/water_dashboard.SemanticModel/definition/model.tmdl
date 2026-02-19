@@ -1,0 +1,31 @@
+model Model
+	culture: fr-FR
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: fr-FR
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["FAIT_drinking_water_services","DIM_years","DIM_region_country","DIM_granularity","FAIT_mortality_rate_water","FAIT_political_stability","_Measures","DIM_stability_level","FAIT_population"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_ProTooling = ["DevMode","CalcGroup","TMDLView_Desktop"]
+
+ref table FAIT_drinking_water_services
+ref table DIM_years
+ref table DIM_region_country
+ref table DIM_granularity
+ref table FAIT_mortality_rate_water
+ref table FAIT_political_stability
+ref table _Measures
+ref table DIM_stability_level
+ref table 'Paramètre type service'
+ref table 'Paramètre mortalité'
+ref table 'Paramètre affichage'
+ref table FAIT_population
+ref table 'Paramètre creation services'
+ref table 'Paramètre consulting'
+
+ref cultureInfo fr-FR
+

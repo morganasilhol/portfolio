@@ -1,0 +1,28 @@
+table 'Paramètre type service'
+	lineageTag: 3e6d346f-c33b-4120-8bcf-98594c11003a
+
+	column Titre
+		lineageTag: 45f64708-7bf7-4110-b564-834f3689193c
+		summarizeBy: none
+		sourceColumn: [Value1]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Value
+		formatString: 0
+		lineageTag: 275b9d7d-7258-4715-94fa-75f90c9eec66
+		summarizeBy: sum
+		sourceColumn: [Value2]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Paramètre type service' = calculated
+		mode: import
+		source =
+				{
+				    ("Services basiques", 0),
+				    ("Services sûrs", 1)
+				}
+
+	annotation PBI_Id = fb2d194577c14ab2bfc004e3bc28fbe3
+

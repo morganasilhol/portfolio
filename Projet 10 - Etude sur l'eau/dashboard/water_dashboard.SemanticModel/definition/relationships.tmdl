@@ -1,0 +1,60 @@
+relationship AutoDetected_a67d000a-9b04-414c-9127-3e37803e45be
+	fromColumn: FAIT_drinking_water_services.country
+	toColumn: DIM_region_country.country
+
+relationship AutoDetected_737eba48-d735-4131-9695-84c1002fc9b1
+	fromColumn: FAIT_drinking_water_services.year
+	toColumn: DIM_years.year
+
+relationship 617eee96-7981-24e4-6d7c-dbaec280f1f9
+	fromColumn: FAIT_drinking_water_services.granularity
+	toColumn: DIM_granularity.granularity
+
+relationship AutoDetected_c66468cb-7241-4ca2-ad45-c6c6abda9f34
+	fromColumn: FAIT_mortality_rate_water.country
+	toColumn: DIM_region_country.country
+
+relationship AutoDetected_c4f6a919-1d69-465d-85f1-f4062cb70aa3
+	fromColumn: FAIT_political_stability.country
+	toColumn: DIM_region_country.country
+
+relationship AutoDetected_79cf43cc-0d37-49d0-ac00-3d7e3d210aec
+	fromColumn: FAIT_mortality_rate_water.year
+	toColumn: DIM_years.year
+
+relationship AutoDetected_88e363cf-933b-4019-a6d6-61834700ddc3
+	fromColumn: FAIT_political_stability.year
+	toColumn: DIM_years.year
+
+relationship AutoDetected_bd551b4c-9be4-42e5-bc00-4f1d543f6501
+	fromColumn: FAIT_mortality_rate_water.granularity
+	toColumn: DIM_granularity.granularity
+
+relationship 3f2fdd75-2065-c470-02a2-3ab42c57e836
+	fromColumn: FAIT_political_stability.country_year
+	toColumn: DIM_stability_level.country_year
+
+relationship 42397924-407c-8189-a810-90b15df59eac
+	fromColumn: FAIT_drinking_water_services.country_year
+	toColumn: DIM_stability_level.country_year
+
+relationship c5c1c642-235e-9b56-a500-5fbc76731535
+	fromColumn: FAIT_mortality_rate_water.country_year
+	toColumn: DIM_stability_level.country_year
+
+relationship AutoDetected_37046e41-ccd0-418e-aea5-56a3d975ed2d
+	fromColumn: FAIT_population.country
+	toColumn: DIM_region_country.country
+
+relationship AutoDetected_c7564b46-25d4-4622-bae4-240c78c03077
+	fromColumn: FAIT_population.year
+	toColumn: DIM_years.year
+
+relationship AutoDetected_82d54ba4-ceab-4706-866a-d2c68b4df92d
+	fromColumn: FAIT_population.country_year
+	toColumn: DIM_stability_level.country_year
+
+relationship AutoDetected_148ce001-cc65-4eeb-9c12-ef8832da4861
+	fromColumn: FAIT_population.granularity
+	toColumn: DIM_granularity.granularity
+

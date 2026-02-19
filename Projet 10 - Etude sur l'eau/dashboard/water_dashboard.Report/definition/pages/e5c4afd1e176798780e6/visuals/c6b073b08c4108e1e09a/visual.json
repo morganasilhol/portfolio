@@ -1,0 +1,16 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.2.0/schema.json",
+  "name": "c6b073b08c4108e1e09a",
+  "position": {
+    "x": 607.75707384403029,
+    "y": 175.79020013802622,
+    "z": 18000,
+    "height": 215.54175293305727,
+    "width": 522.95376121463073,
+    "tabOrder": 19000
+  },
+  "visualGroup": {
+    "displayName": "stabilité vs accès eau",
+    "groupMode": "ScaleMode"
+  }
+}

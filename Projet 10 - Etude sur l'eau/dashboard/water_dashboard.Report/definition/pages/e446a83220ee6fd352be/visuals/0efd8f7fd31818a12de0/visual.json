@@ -1,0 +1,191 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.2.0/schema.json",
+  "name": "0efd8f7fd31818a12de0",
+  "position": {
+    "x": 129.95121951219514,
+    "y": 450.4390243902439,
+    "z": 9000,
+    "height": 177.36585365853659,
+    "width": 1019.4146341463415,
+    "tabOrder": 8000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Autres (mortalité due à la qualité de l'eau, indicateurs contextuels)",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "12pt",
+                      "color": "#373736"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Taux mortalité liée aux services d'eau",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "10.5pt",
+                      "color": "#373736"
+                    }
+                  },
+                  {
+                    "value": " = WASH deaths / population de ce pays * 100000",
+                    "textStyle": {
+                      "fontSize": "10.5pt",
+                      "color": "#373736"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "WASH deaths",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "10.5pt",
+                      "color": "#373736"
+                    }
+                  },
+                  {
+                    "value": " = mortality rate dans un pays / 100000 * population de ce pays",
+                    "textStyle": {
+                      "fontSize": "10.5pt",
+                      "color": "#373736"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Taux d'urbanisation",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "10.5pt",
+                      "color": "#373736"
+                    }
+                  },
+                  {
+                    "value": " = Population urbaine / Population totale",
+                    "textStyle": {
+                      "fontSize": "10.5pt",
+                      "color": "#373736"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Sco",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "10.5pt",
+                      "color": "#373736"
+                    }
+                  },
+                  {
+                    "value": "re de non efficacité politique",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "10.5pt"
+                    }
+                  },
+                  {
+                    "value": " = Mortality Rate + % Non accès aux services basiques + % Non accès aux services sûrs",
+                    "textStyle": {
+                      "fontSize": "10.5pt"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "radius": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#E4EEF7'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "background": [
+        {
+          "properties": {
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

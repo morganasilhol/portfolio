@@ -1,0 +1,45 @@
+table 'Paramètre mortalité'
+	lineageTag: a28790e5-543c-4cde-895a-050ed0c65d93
+
+	column Paramètre
+		lineageTag: 76f464e9-ed9f-4544-a25e-e2d5d351cf55
+		summarizeBy: none
+		sourceColumn: [Value1]
+
+		relatedColumnDetails
+			groupByColumn: 'Paramètre Champs'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Paramètre Champs'
+		isHidden
+		lineageTag: 395b86bf-0573-47f0-a0b9-e97af84f06b3
+		summarizeBy: none
+		sourceColumn: [Value2]
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column Value
+		formatString: 0
+		lineageTag: ffcff706-e1a0-4196-81d3-2cd34b1d0669
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Paramètre mortalité' = calculated
+		mode: import
+		source =
+				{
+				    ("Mortality rate attributed unsafe WASH", NAMEOF('FAIT_mortality_rate_water'[mortality_rate_attributed_unsafe_WASH_services]), 0),
+				    ("WASH deaths", NAMEOF('FAIT_mortality_rate_water'[WASH_deaths]), 1)
+				}
+
+	annotation PBI_Id = ad91f8de44f845ab970bcf2d8403f015
+

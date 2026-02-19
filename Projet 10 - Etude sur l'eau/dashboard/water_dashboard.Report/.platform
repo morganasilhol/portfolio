@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "water_dashboard"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "20d71902-b76f-443d-aec1-579cfbb0c9bb"
+  }
+}

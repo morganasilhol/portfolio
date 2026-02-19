@@ -1,0 +1,83 @@
+table FAIT_drinking_water_services
+	lineageTag: 28012c06-9f8c-4d2d-a4d5-329e368ec9c2
+
+	column country
+		dataType: string
+		lineageTag: 9ac3cff6-42d5-486d-9026-b62126fcacf4
+		dataCategory: Country
+		summarizeBy: none
+		sourceColumn: country
+
+		annotation SummarizationSetBy = Automatic
+
+	column year
+		dataType: int64
+		formatString: 0
+		lineageTag: 6a8e9d04-3251-42b6-a97d-a42f7db29aaa
+		summarizeBy: none
+		sourceColumn: year
+
+		annotation SummarizationSetBy = Automatic
+
+	column popu_use_basic_drinking_water_services
+		dataType: double
+		lineageTag: cc6c4a91-baec-4656-bac2-6f6571a3947c
+		summarizeBy: none
+		sourceColumn: popu_use_basic_drinking_water_services
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column popu_use_safely_drinking_water_services
+		dataType: double
+		lineageTag: 807a6c47-f50d-4e5c-9e09-a981b00dbcbe
+		summarizeBy: none
+		sourceColumn: popu_use_safely_drinking_water_services
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column granularity
+		dataType: string
+		lineageTag: 94a3b7f0-eba9-4ec0-8ace-aefaf3f1dfd3
+		summarizeBy: none
+		sourceColumn: granularity
+
+		annotation SummarizationSetBy = Automatic
+
+	column country_year
+		dataType: string
+		lineageTag: 4dcbd605-0e4e-4fd2-9d6e-6442ee270a7f
+		summarizeBy: none
+		sourceColumn: country_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column population
+		dataType: int64
+		formatString: 0
+		lineageTag: ba4d0913-57d9-44e3-8371-e2330d8c19b2
+		summarizeBy: sum
+		sourceColumn: population
+
+		annotation SummarizationSetBy = Automatic
+
+	partition FAIT_drinking_water_services = m
+		mode: import
+		source =
+				let
+				    Source = GoogleBigQuery.Database([CommandTimeout=#duration(0, 0, 1, 2), ConnectionTimeout=#duration(0, 0, 1, 2)]),
+				    #"projet10-467016" = Source{[Name="projet10-467016"]}[Data],
+				    dataset_Schema = #"projet10-467016"{[Name="dataset",Kind="Schema"]}[Data],
+				    tf_political_and_water_Table = dataset_Schema{[Name="FAIT_drinking_water_services",Kind="Table"]}[Data]
+				in
+				    tf_political_and_water_Table
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

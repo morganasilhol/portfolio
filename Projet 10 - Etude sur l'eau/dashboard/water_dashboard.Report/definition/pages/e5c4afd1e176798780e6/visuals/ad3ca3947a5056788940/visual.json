@@ -1,0 +1,17 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.2.0/schema.json",
+  "name": "ad3ca3947a5056788940",
+  "position": {
+    "x": 572,
+    "y": 465,
+    "z": 8000,
+    "height": 237,
+    "width": 698,
+    "tabOrder": 7000
+  },
+  "visualGroup": {
+    "displayName": "stabilité vs mortalité",
+    "groupMode": "ScaleMode"
+  },
+  "isHidden": true
+}

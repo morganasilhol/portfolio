@@ -1,0 +1,15 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.2.0/schema.json",
+  "name": "9931d89cc39e320d1040",
+  "position": {
+    "x": 873,
+    "y": 521,
+    "z": 10000,
+    "height": 118,
+    "width": 300
+  },
+  "visualGroup": {
+    "displayName": "Jauge",
+    "groupMode": "ScaleMode"
+  }
+}

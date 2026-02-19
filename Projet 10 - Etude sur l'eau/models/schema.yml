@@ -1,0 +1,62 @@
+version: 2
+
+models:
+  - name: td_country_year_granularity
+    description: "table de référence contenant tous les pays et années"
+    columns:
+      - name: country
+        description: "Pays"
+      - name: year
+        description: "Année"
+      - name: granularity
+        description: "Granularité"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - country
+            - year
+            - granularity
+            
+  - name: tf_alldata
+    description: "table avec les toutes les datas"
+    columns:
+      - name: country
+        description: "Pays"
+        tests:
+          - not_null
+      - name: year
+        description: "Année"
+        tests:
+          - not_null
+      - name: granularity
+        description: "Granularité"
+        tests:
+          - not_null      
+      - name: population
+        tests:
+          - between_min_max
+      - name: popu_use_safely_drinking_water_services
+        tests:
+          - between_min_max:
+              max_val: 100
+      - name: popu_use_basic_drinking_water_services
+        tests:
+          - between_min_max:
+              max_val: 100
+      - name: mortality_rate_attributed_unsafe_WASH_services
+      - name: WASH_deaths
+        tests: 
+          - notnull_notnull:
+              column_name: WASH_deaths
+              col2: mortality_rate_attributed_unsafe_WASH_services
+              col3: population
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - country
+            - year
+            - granularity
+      - dbt_utils.expression_is_true:
+          expression: popu_use_safely_drinking_water_services <= popu_use_basic_drinking_water_services
+      - dbt_utils.expression_is_true:
+          expression: WASH_deaths < population

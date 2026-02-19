@@ -1,0 +1,66 @@
+table DIM_region_country
+	lineageTag: 1b36294e-61d0-44d9-b5f5-55fd68acad13
+
+	column country
+		dataType: string
+		lineageTag: b07316d4-0b36-429d-adc4-9b0665c89acf
+		dataCategory: Country
+		summarizeBy: none
+		sourceColumn: country
+
+		annotation SummarizationSetBy = Automatic
+
+	column country_code_alpha2
+		dataType: string
+		lineageTag: 2ba4cba5-f6b5-4803-a8e6-a770b0846c0a
+		dataCategory: Country
+		summarizeBy: none
+		sourceColumn: country_code_alpha2
+
+		annotation SummarizationSetBy = Automatic
+
+	column country_code_alpha3
+		dataType: string
+		lineageTag: cada509d-4880-4d90-a33c-5167aa54315f
+		dataCategory: Country
+		summarizeBy: none
+		sourceColumn: country_code_alpha3
+
+		annotation SummarizationSetBy = Automatic
+
+	column country_code_modified =
+			
+			SWITCH(
+			    TRUE(),
+			    DIM_region_country[country_code_alpha2] IN {"IL", "MD", "RU"}, [country_code_alpha3],
+			    DIM_region_country[country_code_alpha2] IN {"VA"}, BLANK(),
+			    DIM_region_country[country_code_alpha2]
+			)
+		lineageTag: 9672271c-2e04-499a-ba24-585f69ee4dc6
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column region
+		dataType: string
+		lineageTag: 756b9cdf-749f-436a-9f9b-99de98d58879
+		summarizeBy: none
+		sourceColumn: region
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DIM_region_country = m
+		mode: import
+		source =
+				let
+				    Source = GoogleBigQuery.Database([CommandTimeout=#duration(0, 0, 1, 2), ConnectionTimeout=#duration(0, 0, 1, 2)]),
+				    #"projet10-467016" = Source{[Name="projet10-467016"]}[Data],
+				    dataset_Schema = #"projet10-467016"{[Name="dataset",Kind="Schema"]}[Data],
+				    td_country_code_Table = dataset_Schema{[Name="DIM_region_country",Kind="Table"]}[Data]
+				in
+				    td_country_code_Table
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

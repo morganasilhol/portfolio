@@ -1,0 +1,53 @@
+table FAIT_political_stability
+	lineageTag: 8c9b5590-b6cc-490f-af36-95b2a8b030b9
+
+	column country
+		dataType: string
+		lineageTag: 04132559-0105-48ba-b09b-80193de23de0
+		summarizeBy: none
+		sourceColumn: country
+
+		annotation SummarizationSetBy = Automatic
+
+	column year
+		dataType: int64
+		formatString: 0
+		lineageTag: 6b783ad8-ff64-4fff-9e58-419228882fff
+		summarizeBy: none
+		sourceColumn: year
+
+		annotation SummarizationSetBy = Automatic
+
+	column political_stability
+		dataType: double
+		lineageTag: bd890993-498c-460e-a50a-6a2c3ab68539
+		summarizeBy: sum
+		sourceColumn: political_stability
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column country_year
+		dataType: string
+		lineageTag: 78157b9b-d54e-475c-94c0-fd4c07d4b8ae
+		summarizeBy: none
+		sourceColumn: country_year
+
+		annotation SummarizationSetBy = Automatic
+
+	partition FAIT_political_stability = m
+		mode: import
+		source =
+				let
+				    Source = GoogleBigQuery.Database([CommandTimeout=#duration(0, 0, 1, 2), ConnectionTimeout=#duration(0, 0, 1, 2)]),
+				    #"projet10-467016" = Source{[Name="projet10-467016"]}[Data],
+				    dataset_Schema = #"projet10-467016"{[Name="dataset",Kind="Schema"]}[Data],
+				    tf_political_and_water_Table = dataset_Schema{[Name="FAIT_political_stability",Kind="Table"]}[Data]
+				in
+				    tf_political_and_water_Table
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

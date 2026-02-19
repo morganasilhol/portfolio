@@ -1,0 +1,30 @@
+table 'Paramètre affichage'
+	lineageTag: 933e7073-0614-4ac9-afe7-a1e6923e7267
+
+	column Titre
+		lineageTag: 971abb1a-92a1-485e-b677-0ce7940bb1b2
+		summarizeBy: none
+		sourceColumn: [Value1]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Value
+		formatString: 0
+		lineageTag: aea8a39b-a1bd-4544-b05b-e993203b3801
+		summarizeBy: sum
+		sourceColumn: [Value2]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Paramètre affichage' = calculated
+		mode: import
+		source =
+				{
+				    ("% Population n'ayant pas accès aux Services basiques", 0),
+				    ("% Population n'ayant pas accès aux services sûrs", 1),
+				    ("Mortality rate attributed unsafe WASH", 2),
+				    ("WASH deaths", 3)
+				}
+
+	annotation PBI_Id = 63b5d8432b14420ea1869ac7f13f8382
+

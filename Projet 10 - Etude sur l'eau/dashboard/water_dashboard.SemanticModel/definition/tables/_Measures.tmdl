@@ -1,0 +1,383 @@
+table _Measures
+	lineageTag: 9afacd65-398b-40d5-8bef-8631c0a6e82d
+
+	measure TotalPopuNonAccesServicesSafely =
+			
+			SUMX(
+			    VALUES(DIM_region_country[Country]),
+			    VAR PopPays = CALCULATE(AVERAGE(FAIT_drinking_water_services[population]))
+			    VAR TauxPays = CALCULATE(AVERAGE(FAIT_drinking_water_services[popu_use_safely_drinking_water_services])) / 100
+			    RETURN PopPays - (PopPays * TauxPays)
+			)
+		displayFolder: Accès à l'eau
+		lineageTag: 3179b7df-ab7d-4ea8-9f99-0f0ff748e9b1
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure AvgPoliticalStability = AVERAGE(FAIT_political_stability[political_stability])
+		formatString: 0.00
+		displayFolder: Aggregations
+		lineageTag: 80ce8a85-87dc-49dc-8f97-d86153c17a84
+
+	measure AvgMortalityRate = AVERAGE(FAIT_mortality_rate_water[mortality_rate_attributed_unsafe_WASH_services] )
+		formatString: 0.00
+		displayFolder: Aggregations
+		lineageTag: 287c85f7-5dc5-430a-8e3b-e2e2bf32cc94
+
+	measure TotalWASHdeaths =
+			
+			AVERAGEX(
+			    FAIT_mortality_rate_water,
+			    SUM(FAIT_mortality_rate_water[WASH_deaths])
+			    )
+		formatString: 0
+		displayFolder: Aggregations
+		lineageTag: 9e688b5e-c97c-451a-92d7-529159e58314
+
+	measure %AccesServicesBasiques = AVERAGE(FAIT_drinking_water_services[popu_use_basic_drinking_water_services])
+		displayFolder: Accès à l'eau
+		lineageTag: 3120f117-9ce6-4714-93c9-bda24b87779a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure %AccesSafelyServices =
+			
+			AVERAGE(FAIT_drinking_water_services[popu_use_safely_drinking_water_services])
+		displayFolder: Accès à l'eau
+		lineageTag: dbbd0167-a1ff-4e6d-b878-c7036ff8813f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure %NonAccesServicesBasiques =
+			
+			IF(
+			    NOT ISBLANK([%AccesServicesBasiques]),
+			    100 - [%AccesServicesBasiques],
+			    BLANK()
+			)
+		displayFolder: Accès à l'eau
+		lineageTag: 308eff58-ab95-4ad4-ab4a-173d99dc75b4
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure TotalPopuNonAccesEauBasique =
+			
+			SUMX(
+			    VALUES(FAIT_drinking_water_services[Country]),
+			    VAR PopPays = CALCULATE(AVERAGE(FAIT_drinking_water_services[population]))
+			    VAR TauxPays = CALCULATE(AVERAGE(FAIT_drinking_water_services[popu_use_basic_drinking_water_services])) / 100
+			    RETURN PopPays - (PopPays * TauxPays)
+			)
+		displayFolder: Accès à l'eau
+		lineageTag: fecabbb7-413e-4c46-8980-6c62b371032e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure %NonAccesSafelyServices =
+			
+			IF(
+			    NOT ISBLANK([%AccesSafelyServices]),
+			    100 - [%AccesSafelyServices],
+			    BLANK()
+			)
+		displayFolder: Accès à l'eau
+		lineageTag: 8784cf2a-35b8-4330-9009-505966be00a0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure %AccesServicesBasiquesSeuls = ```
+			
+			AVERAGE(FAIT_drinking_water_services[popu_use_basic_drinking_water_services]) 
+			- AVERAGE(FAIT_drinking_water_services[popu_use_safely_drinking_water_services])
+			```
+		displayFolder: Accès à l'eau
+		lineageTag: 4ef9a2a9-39cb-4f6a-83a1-039a14325640
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure SelectedService =
+			
+			SWITCH(
+			    SELECTEDVALUE('Paramètre type service'[Value]),
+			    0, AVERAGE(FAIT_drinking_water_services[popu_use_basic_drinking_water_services]),
+			    1, AVERAGE(FAIT_drinking_water_services[popu_use_safely_drinking_water_services])
+			)
+		formatString: 0
+		displayFolder: Selected Value
+		lineageTag: 5eccc219-f0cb-4d05-a491-becaf9ebc113
+
+	measure SelectedMortality =
+			
+			SWITCH(
+			    SELECTEDVALUE('Paramètre mortalité'[Value]),
+			    0, AVERAGE(FAIT_mortality_rate_water[mortality_rate_attributed_unsafe_WASH_services]),
+			    1, SUM(FAIT_mortality_rate_water[WASH_deaths])
+			)
+		displayFolder: Selected Value
+		lineageTag: 8d30dd59-e859-48a5-8f68-ed6ef2276832
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure SelectedView =
+			
+			VAR sel = SELECTEDVALUE('Paramètre affichage'[Value], 0)
+			RETURN
+			SWITCH(
+			    sel,
+			    0, [%NonAccesServicesBasiques],
+			    1, [%NonAccesSafelyServices],
+			    2, AVERAGE(FAIT_mortality_rate_water[mortality_rate_attributed_unsafe_WASH_services]),
+			    3, [TotalWASHdeaths]
+			)
+		displayFolder: Selected Value
+		lineageTag: 33582750-3c3f-4202-8620-0ec20a7c44db
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure InfobulleSelectedvalue =
+			
+			SWITCH(
+			    SELECTEDVALUE('Paramètre affichage'[Value]),
+			    0, "Non acèss Services d'eau basiques: " & FORMAT(DIVIDE([%NonAccesServicesBasiques], 100, 0), "#,0 %"),
+			    1, "Non accès Services d'eau sûrs: " & FORMAT(DIVIDE([%NonAccesSafelyServices], 100, 0), "#,0 %"),
+			    2, "Mortality rate attributed unsafe WASH: " & FORMAT(AVERAGE(FAIT_mortality_rate_water[mortality_rate_attributed_unsafe_WASH_services]), "#,0"),
+			    3, "WASH deaths: " & FORMAT(AVERAGE(FAIT_mortality_rate_water[WASH_deaths]), "#,0")
+			)
+		displayFolder: Selected Value
+		lineageTag: c65a5889-e4fe-4044-9d9e-79f9a2513b9e
+
+	measure SelectedViewInverse =
+			
+			VAR sel = SELECTEDVALUE('Paramètre affichage'[Value], 0)
+			RETURN
+			SWITCH(
+			    sel,
+			    0, [%AccesServicesBasiques],
+			    1, [%AccesSafelyServices],
+			    2, AVERAGE(FAIT_mortality_rate_water[mortality_rate_attributed_unsafe_WASH_services])
+			)
+		displayFolder: Selected Value
+		lineageTag: 69620761-c055-4464-81a5-836da7854f0e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure %AccesTotal =
+			
+			[%AccesSafelyServices] + [%AccesServicesBasiquesSeuls]
+		displayFolder: Accès à l'eau
+		lineageTag: 02c6449c-08d2-4a61-90b4-db9e639669f4
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure ScorePolitiqueNonEfficace =
+			
+			[AvgMortalityRate]+[%NonAccesServicesBasiques]+[%NonAccesSafelyServices]
+		displayFolder: Autres
+		lineageTag: 6fafce72-1d5b-424e-998d-cda59793a55f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure UrbanPopulationRate =
+			
+			DIVIDE(
+			    CALCULATE(
+			        AVERAGE(FAIT_population[Population]),
+			        REMOVEFILTERS(FAIT_population[Granularity]),
+			        KEEPFILTERS(FAIT_population[Granularity] = "Urban")
+			    ),
+			    CALCULATE(
+			        AVERAGE(FAIT_population[Population]),
+			        REMOVEFILTERS(FAIT_population[Granularity]),
+			        KEEPFILTERS(FAIT_population[Granularity] = "Total")
+			    )
+			)
+		displayFolder: Population
+		lineageTag: ae09836d-8e15-4bf3-bc7d-21e0540ae906
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure RuralPopulationRate =
+			
+			DIVIDE(
+			    CALCULATE(
+			        AVERAGE(FAIT_population[Population]),
+			        REMOVEFILTERS(FAIT_population[Granularity]),
+			        KEEPFILTERS(FAIT_population[Granularity] = "Rural")
+			    ),
+			    CALCULATE(
+			        AVERAGE(FAIT_population[Population]),
+			        REMOVEFILTERS(FAIT_population[Granularity]),
+			        KEEPFILTERS(FAIT_population[Granularity] = "Total")
+			    )
+			)
+		displayFolder: Population
+		lineageTag: a27c4ee8-ebee-4d44-af36-09e06b28dfcf
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure SelectedRate =
+			
+			SWITCH(
+			    SELECTEDVALUE('Paramètre creation services'[Value]),
+			    0, [UrbanPopulationRate],
+			    1, AVERAGE(FAIT_mortality_rate_water[mortality_rate_attributed_unsafe_WASH_services])
+			)
+		displayFolder: Selected Value
+		lineageTag: a610a308-036a-4009-9f2b-ee1376bb7782
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure TitleCreationServices =
+			
+			SWITCH(
+			    SELECTEDVALUE('Paramètre creation services'[Value]),
+			    0, "Accès aux services en fonction de l'urbanisation",
+			    1, "Mortalité en fonction de l'accès aux services"
+			)
+		displayFolder: Selected Value
+		lineageTag: 7fa60334-71fd-40a4-90ac-d919790f463e
+
+	measure UrbanPopulation = ```
+			
+			CALCULATE(
+			    AVERAGE(FAIT_population[Population]),
+			    FILTER(
+			        ALL(FAIT_population),
+			        FAIT_population[granularity] = "Urban" 
+			        && FAIT_population[country] = SELECTEDVALUE(DIM_region_country[country])
+			        && FAIT_population[year] IN VALUES(DIM_years[year])
+			    )
+			)
+			```
+		formatString: 0
+		displayFolder: Population
+		lineageTag: 7daed621-5065-4718-b418-f20156e3a8d3
+
+	measure RuralPopulation = ```
+			
+			CALCULATE(
+			    AVERAGE(FAIT_population[Population]),
+			    FILTER(
+			        ALL(FAIT_population),
+			        FAIT_population[Granularity] = "Rural"  
+			        && FAIT_population[country] = SELECTEDVALUE(DIM_region_country[country])
+			        && FAIT_population[year] IN VALUES(DIM_years[year])
+			    )
+			)
+			```
+		displayFolder: Population
+		lineageTag: f7b65af2-19ec-48e1-9975-7a9b19ba71cd
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure %NonAccesSafelyServices_txt =
+			
+			IF (
+			    NOT ISBLANK ( [%NonAccesSafelyServices] ),
+			    FORMAT ( [%NonAccesSafelyServices] / 100, "0.0 %" ),
+			    ""
+			)
+		displayFolder: Accès à l'eau
+		lineageTag: 16b90803-8ed1-45e0-9a2b-f6bba41c1fd4
+
+	measure %NonAccesServicesBasiques_txt =
+			
+			IF (
+			    NOT ISBLANK ( [%NonAccesServicesBasiques] ),
+			    FORMAT ( [%NonAccesServicesBasiques] / 100, "0.0 %" ),
+			    ""
+			)
+		displayFolder: Accès à l'eau
+		lineageTag: cb49173c-09cc-48c7-8986-5105f59dd890
+
+	measure TotalPopulation =
+			
+			CALCULATE(
+			    AVERAGE(FAIT_drinking_water_services[population]),
+			    DIM_region_country[country] = SELECTEDVALUE(DIM_region_country[country])
+			)
+		displayFolder: Aggregations
+		lineageTag: d313e3af-fdf1-4fb9-b0fc-87d7a263d2d4
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure TotalPopuAccesEauBasique = ```
+			
+			SUMX(
+			    VALUES(FAIT_drinking_water_services[Country]),
+			    VAR PopPays = CALCULATE(AVERAGE(FAIT_drinking_water_services[population]))
+			    VAR TauxPays = CALCULATE(AVERAGE(FAIT_drinking_water_services[popu_use_basic_drinking_water_services])) / 100
+			    RETURN PopPays * TauxPays
+			)
+			
+			```
+		displayFolder: Accès à l'eau
+		lineageTag: 916ba71e-142f-4880-a87b-9ceebf765f80
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure TotalPopuAccesEauSafe = ```
+			
+			SUMX(
+			    VALUES(FAIT_drinking_water_services[Country]),
+			    VAR PopPays = CALCULATE(AVERAGE(FAIT_drinking_water_services[population]))
+			    VAR TauxPays = CALCULATE(AVERAGE(FAIT_drinking_water_services[popu_use_safely_drinking_water_services])) / 100
+			    RETURN PopPays * TauxPays
+			)
+			
+			```
+		displayFolder: Accès à l'eau
+		lineageTag: af7e1f75-06b3-43cf-9552-23bacfea91ba
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure SelectedConsulting =
+			
+			SWITCH(
+			    SELECTEDVALUE('Paramètre consulting'[Value]),
+			    0, [ScorePolitiqueNonEfficace],
+			    1, [%NonAccesServicesBasiques],
+			    2, AVERAGE(FAIT_mortality_rate_water[mortality_rate_attributed_unsafe_WASH_services])
+			)
+		displayFolder: Selected Value
+		lineageTag: 4e801cae-8427-4979-90e3-1a8fdf146af1
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure TitleConculsting =
+			
+			SWITCH(
+			    SELECTEDVALUE('Paramètre creation services'[Value]),
+			    0, "Innefficacité politique vs stabilité",
+			    1, "Non accès à l'eau vs stabilité",
+			    2, "Mortalité due à l'eau vs stabilité"
+			)
+		displayFolder: Selected Value
+		lineageTag: 04c6d11d-fd98-4a88-8e24-b2d49daf6969
+
+	measure TotalPopulation_test = ```
+			
+			    CALCULATE(
+			        AVERAGE(FAIT_population[Population]),
+			        REMOVEFILTERS(FAIT_population[Granularity]),
+			        KEEPFILTERS(FAIT_population[Granularity] = "Total"))
+			```
+		displayFolder: Aggregations
+		lineageTag: 407de968-f7f8-4094-86ba-510fae937093
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition _Measures = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Colonne 1" = _t]),
+				    #"Type modifié" = Table.TransformColumnTypes(Source,{{"Colonne 1", type text}}),
+				    #"Colonnes supprimées" = Table.RemoveColumns(#"Type modifié",{"Colonne 1"})
+				in
+				    #"Colonnes supprimées"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

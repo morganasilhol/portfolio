@@ -1,0 +1,28 @@
+table 'Paramètre creation services'
+	lineageTag: 78c61f06-2f90-4a41-9b3b-a37c354e6aab
+
+	column Titre
+		lineageTag: b78d8835-d9bb-42df-ba4c-3bd9a964e916
+		summarizeBy: none
+		sourceColumn: [Value1]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Value
+		formatString: 0
+		lineageTag: f598e7d7-1f5f-4226-9967-f75d05e87755
+		summarizeBy: sum
+		sourceColumn: [Value2]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Paramètre creation services' = calculated
+		mode: import
+		source =
+				{
+				    ("% d'accès à l'eau et taux de population urbaine", 0),
+				    ("% d'accès à l'eau et taux de mortalité", 1)
+				}
+
+	annotation PBI_Id = efecb9af9e094bbe9097b0072eb77e5f
+

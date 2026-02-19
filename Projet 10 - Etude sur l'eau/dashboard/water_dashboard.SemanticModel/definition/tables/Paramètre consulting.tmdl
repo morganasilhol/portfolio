@@ -1,0 +1,29 @@
+table 'Paramètre consulting'
+	lineageTag: 758eaa3e-2331-4f2e-888d-329e6007d389
+
+	column Titre
+		lineageTag: 05aa0b78-1044-4ab1-b50c-550bbaa89566
+		summarizeBy: none
+		sourceColumn: [Value1]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Value
+		formatString: 0
+		lineageTag: 3d48042a-ab80-452c-8613-ade803b87e9b
+		summarizeBy: sum
+		sourceColumn: [Value2]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Paramètre consulting' = calculated
+		mode: import
+		source =
+				{
+				    ("Score efficacité politique vs stabilité", 0),
+				    ("Accès à l'eau vs stabilité", 1),
+				    ("Mortalité vs stabilité", 2)
+				}
+
+	annotation PBI_Id = 797eb7ac5a3b4875b4a26be4c7a9ec97
+

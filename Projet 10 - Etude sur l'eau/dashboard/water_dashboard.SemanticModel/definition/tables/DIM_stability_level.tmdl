@@ -1,0 +1,46 @@
+table DIM_stability_level
+	lineageTag: fc9cd8e7-9a51-4d94-88fc-5eef1b576f17
+
+	column order_political_stability
+		dataType: int64
+		formatString: 0
+		lineageTag: 1af9f4ef-41d4-47f7-9d65-b0813951350c
+		summarizeBy: sum
+		sourceColumn: order_political_stability
+
+		annotation SummarizationSetBy = Automatic
+
+	column stability_level
+		dataType: string
+		lineageTag: 56727d61-1418-4518-b103-841dd888f94e
+		summarizeBy: none
+		sourceColumn: stability_level
+		sortByColumn: order_political_stability
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column country_year
+		dataType: string
+		lineageTag: 3804b135-4904-47f6-a6b2-0bfb8f5bedcf
+		summarizeBy: none
+		sourceColumn: country_year
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DIM_stability_level = m
+		mode: import
+		source =
+				let
+				    Source = GoogleBigQuery.Database([CommandTimeout=#duration(0, 0, 1, 2), ConnectionTimeout=#duration(0, 0, 1, 2)]),
+				    #"projet10-467016" = Source{[Name="projet10-467016"]}[Data],
+				    dataset_Schema = #"projet10-467016"{[Name="dataset",Kind="Schema"]}[Data],
+				    td_years_Table = dataset_Schema{[Name="DIM_stability_level",Kind="Table"]}[Data]
+				in
+				    td_years_Table
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

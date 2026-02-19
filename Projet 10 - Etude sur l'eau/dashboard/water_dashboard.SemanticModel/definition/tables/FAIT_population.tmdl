@@ -1,0 +1,60 @@
+table FAIT_population
+	lineageTag: b3105bd8-3c1b-47a8-96d3-b85837f79c81
+
+	column country_year
+		dataType: string
+		lineageTag: dd3cc050-dbcc-4b0a-a594-8003fa1eb467
+		summarizeBy: none
+		sourceColumn: country_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column country
+		dataType: string
+		lineageTag: 742ca522-ff98-4d04-abef-6c3c8fa9340c
+		summarizeBy: none
+		sourceColumn: country
+
+		annotation SummarizationSetBy = Automatic
+
+	column year
+		dataType: int64
+		formatString: 0
+		lineageTag: 4fb744b3-3e52-4cab-b4cf-59bb4ccfd036
+		summarizeBy: none
+		sourceColumn: year
+
+		annotation SummarizationSetBy = Automatic
+
+	column granularity
+		dataType: string
+		lineageTag: 7f29730c-4b49-4293-ab43-ca1683b3c5f1
+		summarizeBy: none
+		sourceColumn: granularity
+
+		annotation SummarizationSetBy = Automatic
+
+	column population
+		dataType: int64
+		formatString: 0
+		lineageTag: de8d77a7-ab99-441c-a7fd-6ec23a4ea15c
+		summarizeBy: sum
+		sourceColumn: population
+
+		annotation SummarizationSetBy = Automatic
+
+	partition FAIT_population = m
+		mode: import
+		source =
+				let
+				    Source = GoogleBigQuery.Database([CommandTimeout=#duration(0, 0, 1, 2), ConnectionTimeout=#duration(0, 0, 1, 2)]),
+				    #"projet10-467016" = Source{[Name="projet10-467016"]}[Data],
+				    dataset_Schema = #"projet10-467016"{[Name="dataset",Kind="Schema"]}[Data],
+				    tf_political_and_water_Table = dataset_Schema{[Name="FAIT_population",Kind="Table"]}[Data]
+				in
+				    tf_political_and_water_Table
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

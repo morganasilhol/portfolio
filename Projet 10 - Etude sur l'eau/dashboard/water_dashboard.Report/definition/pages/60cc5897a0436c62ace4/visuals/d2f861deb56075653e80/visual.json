@@ -1,0 +1,153 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.2.0/schema.json",
+  "name": "d2f861deb56075653e80",
+  "position": {
+    "x": 99.740259740259731,
+    "y": 223.92666157372039,
+    "z": 0,
+    "height": 442.9640947288006,
+    "width": 928.95339954163478
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DIM_years"
+                    }
+                  },
+                  "Property": "year"
+                }
+              },
+              "queryRef": "DIM_years.year",
+              "nativeQueryRef": "year"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DIM_region_country"
+                    }
+                  },
+                  "Property": "country"
+                }
+              },
+              "queryRef": "DIM_region_country.country",
+              "nativeQueryRef": "country"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "TotalPopulation_test"
+                }
+              },
+              "queryRef": "_Measures.TotalPopulation_test",
+              "nativeQueryRef": "TotalPopulation_test"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "UrbanPopulation"
+                }
+              },
+              "queryRef": "_Measures.UrbanPopulation",
+              "nativeQueryRef": "UrbanPopulation"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "UrbanPopulationRate"
+                }
+              },
+              "queryRef": "_Measures.UrbanPopulationRate",
+              "nativeQueryRef": "UrbanPopulationRate"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "0b2e7fc3c0804b505789",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "DIM_region_country"
+              }
+            },
+            "Property": "country"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "88ab89259697c44ac167",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "DIM_years"
+              }
+            },
+            "Property": "year"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "5155f4cd0756ade0a422",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "UrbanPopulation"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "2d8dc0ba46508b3812ad",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "UrbanPopulationRate"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
+  }
+}
