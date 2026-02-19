@@ -1,0 +1,1333 @@
+---
+title: "projet_9"
+author: "Morgana Silhol"
+format: pdf
+editor: visual
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(readr)
+library(skimr)
+library(dm)
+library(ggplot2)
+library(zoo)
+library(lubridate)
+library(waldo)
+library(scales)
+library(plotly)
+library(ineq)
+library(gglorenz)
+library(vcd)
+library(forecast)
+library(car)
+library(FSA)
+```
+
+### Préparation des données
+
+#### Import des données
+
+```{r}
+
+df_customers <- read_csv('customers.csv')
+
+df_products <- read_csv('products.csv')
+
+df_transactions <- read_csv('transactions.csv')
+```
+
+#### Exploration
+
+```{r}
+glimpse(df_customers)
+
+glimpse(df_products)
+
+glimpse(df_transactions)
+```
+
+Certaines colonnes doivent être converties en facteurs :
+
+```{r}
+df_customers$sex <- as.factor(df_customers$sex)
+```
+
+```{r}
+df_products$categ <- as.factor(df_products$categ)
+```
+
+#####Exploration de df_customers
+
+```{r}
+head(df_customers)
+```
+
+```{r}
+skim(df_customers)
+```
+
+#####Exploration de df_products
+
+```{r}
+skim(df_products)
+```
+
+```{r}
+head(df_products)
+```
+
+On remarque que les id_prod commencent par le chiffre de la catégorie.
+
+```{r}
+df_products %>%
+  mutate(
+    categ_from_id = as.numeric(str_extract(id_prod, "^\\d")),
+    is_mismatch = categ != categ_from_id
+  ) %>%
+  filter(is_mismatch)
+```
+
+Pas d'id_prod en décalage avec la catégorie.
+
+```{r}
+df_products %>%
+  group_by(categ) %>%
+  summarise(
+    min_price = min(price),
+    max_price = max(price),
+    mean_price = mean(price),
+    median_price = median(price)
+  )
+```
+
+```{r}
+ggplot(df_products, aes(x = categ, y = price, fill = categ)) +
+  geom_boxplot(show.legend = FALSE) +
+  labs(
+    title = "Distribution des prix par catégorie",
+    x = "Catégorie",
+    y = "Prix"
+  ) +
+  theme_minimal()
+```
+
+Les prix semblent avoir une certaine relation avec la catégorie.
+
+Un prix à -1 est anormal.
+
+```{r}
+df_products %>% 
+  filter(price <= 0)
+```
+
+Un seul prix en -1. Comme on ne connaît pas la vraie valeur, remplacer par null est préférable.
+
+```{r}
+df_products <- df_products %>% 
+  mutate(price = ifelse(price < 0, NA, price))
+```
+
+#####Exploration de df_transactions
+
+```{r}
+skim(df_transactions)
+```
+
+Présence de valeurs nulles sur date
+
+```{r}
+df_transactions %>% 
+  filter(is.na(date))
+```
+
+A nouveau, le id_prod T_0 pose problème. Le mieux est de le supprimer.
+
+```{r}
+df_products <- df_products %>%
+  filter(id_prod != "T_0")
+```
+
+```{r}
+df_transactions <- df_transactions %>%
+  filter(id_prod != "T_0")
+```
+
+#### Fusion des données
+
+Avant vérification des clés
+
+```{r}
+df_transactions %>% 
+  anti_join(df_customers, by = "client_id") %>% 
+  summarise(nb = n())
+```
+
+```{r}
+df_transactions %>% 
+  anti_join(df_products, by = "id_prod") %>% 
+  summarise(nb = n())
+```
+
+On constate qu'il existe des id_prod côté transactions qui n'existent pas dans df_products, ce qui n'est pas normal puisque c'est la table de référence.
+
+```{r}
+df_transactions %>% 
+  anti_join(df_products, by = "id_prod") %>% 
+  head()
+```
+
+Il s'agit toujours toujours du même id_prod, cela ne semble pas être un id_prod qui aurait été supprimé puisqu'il existe une transaction même en 2023.
+
+C'est un manque dans la table de référence, il faudrait l'ajouter. Problème : on ne connaît pas son prix. On pourrait l'ajouter à la table en lui donnant le prix moyen des autres produits de la même catégorie. Sa catégorie est 0 puisque l'id product commence par 0.
+
+```{r}
+df_products <- bind_rows(
+  df_products,
+  tibble(
+    id_prod = "0_2245",
+    price = df_products %>%
+      filter(categ == 0) %>%
+      summarise(mean_price = mean(price, na.rm = TRUE)) %>%
+      pull(mean_price),
+    categ = "0"
+  )
+)
+```
+
+```{r}
+df_products %>%
+  filter(id_prod == "0_2245")
+```
+
+```{r}
+
+df_alldata <- df_transactions %>%
+  left_join(df_customers, by = "client_id") %>%
+  left_join(df_products, by = "id_prod")
+```
+
+```{r}
+df_alldata %>% 
+  filter(if_any(everything(), is.na))
+```
+
+### Analyse des indicateurs
+
+#### Evolution dans le temps
+
+##### Chiffre d'affaires par catégorie
+
+```{r}
+df_cat_summary <- df_alldata %>%
+  group_by(categ) %>%
+  summarise(total_revenue = sum(price),
+            n_products = n_distinct(id_prod))
+
+df_cat_summary <- df_cat_summary %>%
+  mutate(total_revenue_m = total_revenue / 1e6)
+```
+
+```{r}
+ggplot(df_cat_summary, aes(x = categ, y = total_revenue_m, fill = categ)) +
+  geom_col(show.legend = FALSE) +
+  geom_text(aes(label = paste0(scales::comma(round(total_revenue_m, 2)), "M")), 
+            vjust = -0.5, size = 3.5) +
+  scale_y_continuous(labels = function(x) paste0(x, "M")) +
+  labs(
+    title = "Chiffre d’affaires par catégorie",
+    x = "Catégorie",
+    y = "Chiffre d’affaires (en millions)"
+    ) +
+  theme_minimal()
+```
+
+##### Moyenne mobile
+
+###### Moyenne mobile par an
+
+Les données vont de mars 2021 à fin février 2023 = 2 années complètes.
+
+Trop peu d'années pour faire par année.
+
+```{r}
+
+df_moyenne_par_an = df_alldata %>%
+  mutate(fiscal_year = if_else(month(date) >= 3, year(date), year(date) - 1),
+         fiscal_year = as.factor(fiscal_year)) %>%
+  group_by(fiscal_year) %>%
+  summarise(total_revenue = sum(price))
+
+```
+
+```{r}
+ggplot(df_moyenne_par_an, aes(x = fiscal_year)) +
+  geom_col(aes(y = total_revenue), fill = "steelblue") +
+  geom_text(aes(
+      y = total_revenue,
+      label = paste0(round(total_revenue / 1e6, 2), " M")
+    ),
+    vjust = -0.5,
+    size = 3.5
+  ) +
+  scale_y_continuous(
+    labels = function(x) paste0(round(x / 1e6, 2), " M"),
+    breaks = seq(0, 6000000, by = 1000000)
+  ) +
+  labs(x = "Année fiscale", y = "Chiffre d'affaires", title = "CA annuel") +
+  theme_minimal()
+```
+
+###### Moyenne mobile mensuelle
+
+```{r}
+
+df_moyenne_par_mois = df_alldata %>%
+  mutate(month_year = lubridate::floor_date(as.Date(date), unit = "month")) %>%
+  group_by(month_year) %>%
+  summarise(total_revenue = sum(price))
+
+df_moyenne_par_mois <- df_moyenne_par_mois %>%
+  arrange(month_year) %>%
+  mutate(MA3 = zoo::rollmean(total_revenue, k = 3, align = "right", fill = NA))
+
+df_moyenne_par_mois <- df_moyenne_par_mois %>%
+  mutate(
+    MA3 = zoo::rollmean(total_revenue, k = 3, align = "right", fill = NA),
+    show_label = (row_number() %% 3 == 0)
+  )
+
+```
+
+```{r, warning=FALSE}
+ggplot(df_moyenne_par_mois, aes(x = month_year)) +
+  geom_col(aes(y = total_revenue), fill = "steelblue") +
+  geom_line(aes(y = MA3, group = 1), color = "red", size = 1) +
+  geom_point(
+  aes(y = MA3),
+  color = "red", size = 2.5
+  ) +
+  scale_x_date(date_labels = "%b-%y", date_breaks = "3 months") + 
+  scale_y_continuous(
+    labels = label_number(big.mark = " ", decimal.mark = ","),
+    breaks = seq(0, 650000, by = 100000)
+    ) + 
+  labs(title = "Chiffre d'affaires mensuel et moyenne mobile 3 mois",
+       x = "Mois",
+       y = "Chiffre d'affaires")
+```
+
+###### Moyenne mobile hebdomadaire
+
+Moyenne mobile par semaine-année. Permet d'analyser l'évolution du chiffre d'affaires, tendances et anomalies spécifiques à une année.
+
+```{r}
+
+df_moyenne_par_semaine_année = df_alldata %>%
+  mutate(
+    date = as.Date(date),
+    week_year = floor_date(date, unit = "week", week_start = 1) 
+    # permet de dire qu'on veut que lundi soit le début de la semaine
+    ) %>%
+  group_by(week_year) %>%
+  summarise(
+    total_revenue = sum(price),
+    n_days = n_distinct(date)
+  ) %>%
+  arrange(week_year) %>%
+  # Supprimer la dernière semaine si elle est incomplète (< 7 jours)
+  filter(!(week_year == max(week_year) & n_days < 7)) %>%
+  mutate(
+    MA3 = zoo::rollmean(total_revenue, k = 5, align = "right", fill = NA)
+  ) %>%
+  ungroup()
+```
+
+```{r, warning=FALSE, fig.width=12, fig.height=5}
+ggplot(df_moyenne_par_semaine_année, aes(x = week_year)) +
+  geom_line(aes(y = total_revenue), fill = "steelblue") +
+  geom_line(aes(y = MA3, group = 1), color = "red", size = 1) +
+  scale_y_continuous(
+    labels = label_number(big.mark = " "),
+    breaks = seq(0, 150000, by = 10000)
+    ) + 
+    scale_x_date(
+    date_breaks = "2 month",
+    date_labels = "%b %Y",
+    expand = expansion(mult = c(0.01, 0.01))
+  ) +
+  labs(title = "Chiffre d'affaires par semaine-année",
+       x = "Mois année",
+       y = "Chiffre d'affaires") +
+  theme_minimal()
+```
+
+Analyse : - Grosse chute en octobre 2021, mais ça n'a pas été le cas en octobre 2022, donc évènement ? - Montée en février 2022 mais là encore pas de répétition l'année d'après - La courbe est plus régulière à partir de mars 2022
+
+Même chose mais en décomposant par catégorie :
+
+```{r}
+
+df_moyenne_par_semaine_année_et_categ = df_alldata %>%
+  mutate(
+    date = as.Date(date),
+    categ = as.factor(categ),
+    week_year = floor_date(date, unit = "week", week_start = 1) 
+    # permet de dire qu'on veut que lundi soit le début de la semaine
+    ) %>%
+  group_by(week_year, categ) %>%
+  summarise(
+    total_revenue = sum(price),
+    n_days = n_distinct(date)
+  ) %>%
+  arrange(week_year) %>%
+  # Supprimer la dernière semaine si elle est incomplète (< 7 jours)
+  group_by(categ) %>%
+  filter(!(week_year == max(week_year) & n_days < 7)) %>%
+  mutate(
+    MA3 = zoo::rollmean(total_revenue, k = 5, align = "right", fill = NA)
+  ) %>%
+  ungroup()
+```
+
+```{r, warning=FALSE, fig.width=12, fig.height=5}
+ggplot(df_moyenne_par_semaine_année_et_categ, aes(x = week_year, color = categ)) +
+  geom_line(aes(y = total_revenue)) +
+  #geom_line(aes(y = MA3), size = 1) +
+  scale_y_continuous(
+    labels = label_number(big.mark = " "),
+    breaks = seq(0, 150000, by = 10000)
+    ) + 
+    scale_x_date(
+    date_breaks = "2 month",
+    date_labels = "%b %Y",
+    expand = expansion(mult = c(0.01, 0.01))
+  ) +
+  labs(title = "Total CA, par semaine-année et catégorie",
+       x = "Mois année",
+       y = "Chiffre d'affaires")
+```
+
+Autre méthode : par numéro de semaine en faisant une moyenne sur les deux années Pour analyser les tendances qui reviennent
+
+```{r}
+df_par_num_semaine <- df_alldata %>%
+  mutate(
+    date = as.Date(date),
+    year = year(date),
+    week_num = isoweek(date)
+  ) %>%
+  group_by(year, week_num) %>%
+  mutate(n_days = n_distinct(date(date))) %>%
+  filter(n_days == 7) %>% #enlève les semaines incomplètes
+  summarise(total_revenue = sum(price, na.rm = TRUE)) %>%
+  ungroup() %>%
+  group_by(week_num) %>%
+  summarise(
+    avg_revenue = mean(total_revenue, na.rm = TRUE)
+  ) %>%
+  arrange(week_num) %>%
+  mutate(
+    MA5 = rollmean(avg_revenue, k = 5, align = "right", fill = NA)
+  )
+
+```
+
+Dataframe pour les saisons afin de se réperer mieux dans le visuel
+
+```{r}
+saisons <- data.frame(
+  saison = c("Hiver", "Printemps", "Été", "Automne", "Hiver"),
+  start_week = c(1, 9, 23, 36, 49),
+  end_week = c(9, 23, 36, 49, 52),
+  couleur = c("#A6CEE3", "#B2DF8A", "#FDBF6F", "#FB9A99", "#A6CEE3")
+)
+```
+
+```{r, warning=FALSE, fig.width=14, fig.height=5}
+ggplot(df_par_num_semaine, aes(x = week_num)) +
+  
+  geom_rect(data = saisons, inherit.aes = FALSE,
+            aes(xmin = start_week, xmax = end_week, ymin = -Inf, ymax = Inf, fill = saison),
+            alpha = 0.2) +
+  scale_fill_manual(
+    values = setNames(saisons$couleur, saisons$saison)
+  ) +
+  
+  # chiffre d'affaires moyen
+  geom_line(aes(y = avg_revenue, color = "Chiffre d'affaires hebdomadaire moyen")) +
+  
+  # moyenne mobile
+  geom_line(aes(y = MA5, color = "Tendance sur 5 semaines"), size = 1) +
+  
+  #geom_smooth(aes(y = avg_revenue, color = "Tendance saisonnière (LOESS)"), method = "loess", span = 0.6, se = FALSE, size = 1) +
+  
+  scale_y_continuous(
+    labels = label_number(big.mark = " "),
+    breaks = seq(0, 150000, by = 10000)
+  ) + 
+  scale_x_continuous(
+    breaks = seq(1, 52, by = 1),
+    minor_breaks = NULL
+  ) +
+  
+  # couleurs pour les lignes
+  scale_color_manual(
+    values = c(
+      "Chiffre d'affaires hebdomadaire moyen" = "steelblue",
+      "Tendance sur 5 semaines" = "red",
+      "Tendance saisonnière (LOESS)" = "green"
+    )
+  ) +
+  
+  labs(title = "Chiffre d'affaires moyen hebdomadaire",
+       x = "Semaine",
+       y = "Chiffre d'affaires",
+       fill = "Saison",
+       color = "Courbes") +
+  theme_minimal()
+```
+
+On voit que chaque année, il y a un creux au milieu du printemps et vers le début de l'automne.
+
+Limites : On a que deux années et celles-ci sont très différentes (gros pic et grand creux pour 2021). Les pics et creux semblent s'expliquer par des effets contextuels ponctuels mais à confirmer avec plus d'historique.
+
+Par jour :
+
+```{r}
+df_day <- df_alldata %>%
+  mutate(date = as.Date(date)) %>%
+  group_by(
+    year = year(date), 
+    month = month(date), 
+    day = day(date)
+  ) %>%
+  summarise(
+    total_revenue = sum(price, na.rm = TRUE),
+    .groups = "drop") %>%
+  mutate(date = as.Date(paste(year, month, day, sep = "-"))) %>%
+  mutate(week_year = floor_date(date, unit = "week", week_start = 1)) %>%
+  arrange(date)
+```
+
+Décomposition STL
+
+```{r}
+# Créer la série temporelle
+ts_day <- ts(df_day$total_revenue, frequency = 7)
+
+# Décomposition STL
+stl_day <- mstl(ts_day)
+
+# Extraire composantes
+df_day <- df_day %>%
+  mutate(
+    trend = as.numeric(stl_day[, "Trend"]),
+    seasonal_weekly = as.numeric(stl_day[, "Seasonal7"]),
+    residual= as.numeric(stl_day[, "Remainder"])
+  )
+```
+
+```{r, warning=FALSE, fig.width=14, fig.height=5}
+ggplot() +
+
+  geom_line(data = within(df_day, variable <- "Chiffre d'affaires"),
+            aes(x = date, y = total_revenue)) +
+
+  geom_line(data = within(df_day, variable <- "Tendance"),
+            aes(x = date, y = trend)) +
+
+  geom_line(data = within(df_day, variable <- "Saisonnalité"),
+            aes(x = date, y = seasonal_weekly), linetype = "dashed") +
+
+  geom_line(data = within(df_day, variable <- "Résidus"),
+            aes(x = date, y = residual), linetype = "dotdash") +
+
+  
+  scale_x_date(date_breaks = "2 months", date_labels = "%b %Y") +
+
+  facet_wrap(~ variable, scales = "free_y", nrow = 4) +
+  
+  labs(x = "Date", y = NULL, title = "Décomposition du chiffre d'affaires par jour") +
+
+  theme_minimal() +
+  theme(legend.position = "none")
+
+
+```
+
+##### Nombre de clients et transactions par mois
+
+```{r}
+
+df_clients_par_mois = df_alldata %>%
+  mutate(month_year = lubridate::floor_date(as.Date(date), unit = "month")) %>%
+  group_by(month_year) %>%
+  summarise(
+    nb_clients_uniques = n_distinct(client_id)
+  )
+  
+```
+
+```{r, fig.width=12, fig.height=4}
+ggplot(df_clients_par_mois, aes(x = month_year, y = nb_clients_uniques)) +
+  geom_line(show.legend = FALSE, color = "#4F81BD" , size = 0.75) +
+  scale_x_date(
+    date_breaks = "2 month",
+    date_labels = "%b %Y",
+    expand = expansion(mult = c(0.01, 0.02))
+  ) +
+  labs(
+    title = "Nombre clients par mois",
+    x = NULL,
+    y = "Nombre clients"
+    ) +
+  theme_minimal()
+```
+
+```{r}
+df_transactions_par_mois = df_alldata %>%
+  mutate(month_year = lubridate::floor_date(as.Date(date), unit = "month")) %>%
+  group_by(month_year) %>%
+  summarise(
+    nb_transactions = n()
+  )
+```
+
+```{r, fig.width=12, fig.height=4}
+ggplot(df_transactions_par_mois, aes(x = month_year, y = nb_transactions)) +
+  geom_line(show.legend = FALSE, color = "#4F81BD" , size = 0.75) +
+  scale_x_date(
+    date_breaks = "2 month",
+    date_labels = "%b %Y",
+    expand = expansion(mult = c(0.01, 0.02))
+  ) +
+  labs(
+    title = "Nombre transactions par mois",
+    x = NULL,
+    y = "Nombre transactions"
+    ) +
+  theme_minimal()
+```
+
+#### Zoom références
+
+##### Les top produits
+
+```{r}
+df_top_produits_ca = df_alldata %>%
+  group_by(id_prod) %>%
+  summarise(
+    nb_transactions = n(),
+    total_ca = sum(price),
+    price = mean(price)
+  ) %>%
+  arrange(desc(total_ca)) %>%
+  slice_head(n = 10) %>%
+  arrange(total_ca) %>%
+  mutate(id_prod = factor(id_prod, levels = id_prod))
+```
+
+```{r, results = "hide"}
+
+plotly::ggplotly(
+  ggplot(df_top_produits_ca, aes(x = id_prod, y = total_ca,
+                                 text = paste("CA : ", round(total_ca, 0), " €",
+                                              "<br>Prix unitaire : ", round(price, 2), " €",
+                                              "<br>Ventes : ", nb_transactions))) +
+    geom_col(fill = "#4F81BD") +
+    labs(
+      title = "Top 10 Produits CA",
+      x = "ID Produit",
+      y = "Chiffre d'affaires"
+    ) +
+    coord_flip(),
+  tooltip = "text"
+)
+```
+
+```{r}
+df_top_produits_ventes = df_alldata %>%
+  group_by(id_prod) %>%
+  summarise(
+    nb_transactions = n(),
+    total_ca = sum(price),
+    price = mean(price)
+  ) %>%
+  arrange(desc(nb_transactions)) %>%
+  slice_head(n = 10) %>%
+  arrange(nb_transactions) %>%
+  mutate(id_prod = factor(id_prod, levels = id_prod))
+```
+
+```{r, results = "hide", warning=FALSE, fig.width=17, fig.height=9}
+plotly::ggplotly(
+  ggplot(df_top_produits_ventes, aes(x = id_prod, y = nb_transactions,
+                                 text = paste("Ventes : ", nb_transactions,
+                                              "<br>Prix unitaire : ", round(price, 2), " €",
+                                              "<br>CA : ", round(total_ca, 0), " €"))) +
+  geom_col(fill = "#4F81BD") +
+    labs(
+      title = "Top 10 Produits Ventes",
+      x = "ID Produit",
+      y = "Ventes"
+      ) +
+    coord_flip(),
+  tooltip = "text"
+)
+```
+
+Les produits les plus vendus sont des produits de premier prix (catégorie 1) Les produits rapportant le plus de chiffre d'affaires sont pour la plupart des produits chers (catégorie 2)
+
+##### Les flop produits
+
+Attention : récupérer les produits avec 0 ventes et CA qui ne sont pas présents dans df_alldata.
+
+```{r}
+df_flop_produits_ca = df_alldata %>%
+  group_by(id_prod) %>%
+  summarise(
+    nb_transactions = n(),
+    total_ca = sum(price),
+    .groups = "drop"
+  )
+  
+df_flop_produits_ca = df_products %>%
+  left_join(df_flop_produits_ca, by = "id_prod") %>%
+  mutate(
+    nb_transactions = replace_na(nb_transactions, 0),
+    total_ca = replace_na(total_ca, 0)
+) %>%
+  arrange(total_ca) %>%
+  slice_head(n = 10) %>%
+  arrange(total_ca) %>%
+  mutate(id_prod = factor(id_prod, levels = id_prod))
+
+```
+
+```{r, results = "hide"}
+plotly::ggplotly(
+  ggplot(df_flop_produits_ca, aes(x = id_prod, y = total_ca,
+                                 text = paste("CA : ", round(total_ca, 0), " €",
+                                              "<br>Prix unitaire : ", round(price, 2), " €",
+                                              "<br>Ventes : ", nb_transactions))) +
+    geom_col(fill = "#4F81BD") +
+    labs(
+      title = "Flop 10 Produits CA",
+      x = "ID Produit",
+      y = "Chiffre d'affaires"
+    ) +
+    coord_flip(),
+  tooltip = "text"
+)
+```
+
+```{r}
+df_flop_produits_ventes = df_alldata %>%
+  group_by(id_prod) %>%
+  summarise(
+    nb_transactions = n(),
+    total_ca = sum(price),
+    .groups = "drop"
+  )
+
+df_flop_produits_ventes = df_products %>%
+  left_join(df_flop_produits_ventes, by = "id_prod") %>%
+  mutate(
+    nb_transactions = replace_na(nb_transactions, 0),
+    total_ca = replace_na(total_ca, 0)
+  ) %>%
+  arrange(nb_transactions) %>%
+  slice_head(n = 10) %>%
+  arrange(nb_transactions) %>%
+  mutate(id_prod = factor(id_prod, levels = id_prod))
+```
+
+```{r, results = "hide"}
+plotly::ggplotly(
+  ggplot(df_flop_produits_ventes, aes(x = id_prod, y = nb_transactions,
+                                 text = paste("Ventes : ", nb_transactions,
+                                              "<br>Prix unitaire : ", round(price, 2), " €",
+                                              "<br>CA : ", round(total_ca, 0), " €"))) +
+  geom_col(fill = "#4F81BD") +
+    labs(
+      title = "Flop 10 Produits Ventes",
+      x = "ID Produit",
+      y = "Ventes"
+      ) +
+    coord_flip(),
+  tooltip = "text"
+)
+```
+
+Les flop produits que ce soient en ventes ou en CA sont très majoritairement de catégorie 0.
+
+```{r}
+df_cat_summary <- df_alldata %>%
+  group_by(categ) %>%
+  summarise(total_revenue = sum(price))
+
+df_cat_summary <- df_cat_summary %>%
+  mutate(total_revenue_m = total_revenue / 1e6)
+```
+
+```{r}
+ggplot(df_cat_summary, aes(x = categ, y = total_revenue_m, fill = categ)) +
+  geom_col(show.legend = FALSE) +
+  geom_text(aes(label = paste0(scales::comma(round(total_revenue_m, 2)), "M")), 
+            vjust = -0.5, size = 3.5) +
+  scale_y_continuous(labels = function(x) paste0(x, "M")) +
+  labs(
+    title = "Chiffre d’affaires par catégorie",
+    x = "Catégorie",
+    y = "Chiffre d’affaires (en millions)"
+    ) +
+  theme_minimal()
+```
+
+##### Repartition par catégorie
+
+```{r}
+df_cat_repartition <- df_alldata %>%
+  group_by(categ) %>%
+  summarise(total_revenue = sum(price),
+            n_products = n())
+```
+
+```{r}
+ggplot(df_cat_repartition, aes(x = categ, y = n_products, fill = categ)) +
+  geom_col(show.legend = FALSE) +
+  geom_text(aes(label = paste0(scales::comma(round(n_products / 1e3, 2)), "K")), 
+            vjust = -0.5, size = 3.5) +
+  scale_y_continuous(labels = function(x) paste0(x / 1e3, "K")) +
+  labs(
+    title = "Nombre de produits par catégorie",
+    x = "Catégorie",
+    y = "Nombre de produits"
+    ) +
+  theme_minimal()
+```
+
+#### Profils des clients
+
+##### Clients BtoB
+
+Pour tenter distinguer les revendeurs des autres, on peut se baser sur plusieurs indices : - Volumétrie des achats - Achats hors week end, hors soir (mais achats sur web donc sans doute fuseaux horaires différents) - Nombre de sessions moins nombreuses car planifiées - Et surtout : achat du même produit plusieurs fois
+
+Une règle pourrait être : Nb livres \> 5 sur une session + achats en semaine
+
+```{r}
+df_alldata_v2 <- df_alldata %>%
+  mutate(
+    hour = hour(date),
+    num_day = wday(date, week_start = 1),
+    is_week = num_day <= 5
+  )
+
+```
+
+```{r}
+df_achats_client_produit <- df_alldata_v2 %>%
+  group_by(client_id, id_prod) %>%
+  summarise(nb_achats_produit = n(), .groups = "drop")
+```
+
+```{r}
+achats_repetes <- df_achats_client_produit %>%
+  filter(nb_achats_produit >= 2) %>%
+  group_by(client_id) %>%
+  summarise(nb_produits_repetes = n())
+```
+
+```{r}
+clients_profils <- df_alldata_v2 %>%
+  group_by(client_id) %>%
+  summarise(
+    nb_transactions = n(),
+    montant_total = sum(price, na.rm = TRUE),
+    achats_en_journee = mean(hour >= 9 & hour <= 18), # proportion d'achats entre 9h et 18h
+    achats_en_semaine = mean(num_day <= 5), # proportion d'achats en semaine
+    sexe = first(sex),
+    age = mean(as.numeric(format(Sys.Date(), "%Y")) - birth)
+  ) %>%
+  left_join(achats_repetes, by = "client_id") %>%
+  mutate(
+    nb_produits_repetes = replace_na(nb_produits_repetes, 0),
+    plage_horaire = case_when(
+      achats_en_journee >= 0.8 ~ "journée",
+      achats_en_journee <= 0.2 ~ "hors journée",
+      TRUE ~ "mixte"
+    ),
+    plage_semaine = case_when(
+      achats_en_semaine >= 0.8 ~ "semaine",
+      achats_en_semaine <= 0.2 ~ "hors jours ouvrables",
+      TRUE ~ "mixte"
+  )
+)
+```
+
+```{r}
+clients_profils <- clients_profils %>%
+  left_join(
+    df_alldata_v2 %>%
+      group_by(client_id, session_id) %>%
+      summarise(montant_panier = sum(price), .groups = "drop") %>%
+      group_by(client_id) %>%
+      summarise(montant_panier_moyen = mean(montant_panier), .groups = "drop"),
+    by = "client_id"
+  )
+```
+
+```{r}
+top_clients_achats_repetes <- clients_profils %>%
+  arrange(desc(nb_produits_repetes)) %>%
+  slice_head(n = 10)
+    
+top_clients_montant <- clients_profils %>%
+  arrange(desc(montant_total)) %>%
+  slice_head(n = 10)
+```
+
+```{r}
+ggplot(top_clients_achats_repetes, aes(x = reorder(client_id, nb_produits_repetes), y = nb_produits_repetes)) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
+  labs(
+    title = "Top 10 clients - Achats répétés",
+    x = "Client",
+    y = "Nombre de produits achetés plusieurs fois"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+ggplot(top_clients_montant, aes(x = reorder(client_id, montant_total), y = montant_total)) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
+  scale_y_continuous(labels = label_number(big.mark = " ", decimal.mark = ",")) +
+  labs(
+    title = "Top 10 clients - Montant total dépensé",
+    x = "Client",
+    y = "Montant total dépensé (€)"
+  ) +
+  theme_minimal()
+```
+
+On remarque que 4 clients se démarquent particulièrement à la fois : - pour le montant total dépensé - le nombre d'achats répétés du même produit
+
+Avoir une version sans ces outliers pour les analyses :
+
+```{r}
+clients_profils_sans_outliers <- clients_profils %>%
+  filter(!(client_id %in% c("c_1609", "c_4958", "c_6714", "c_3454")))
+  
+```
+
+##### Courbe de Lorenz
+
+But : savoir si le CA dépend d'une petite partie des clients ou non.
+
+```{r}
+plot(
+  Lc(clients_profils$montant_total),
+  main = "Courbe de Lorenz - CA par client",
+  xlab = "Part cumulée des clients",
+  ylab = "Part cumulée du CA",
+  col = "steelblue",
+  lwd = 2
+)
+abline(0, 1, col = "red", lty = 2)  # Diagonale
+
+```
+
+```{r}
+plot(
+  Lc(clients_profils_sans_outliers$montant_total),
+  main = "Courbe de Lorenz - CA par client",
+  xlab = "Part cumulée des clients",
+  ylab = "Part cumulée du CA",
+  col = "steelblue",
+  lwd = 2
+)
+abline(0, 1, col = "red", lty = 2)  # Diagonale
+```
+
+```{r}
+gini = Gini(clients_profils$montant_total)
+print(gini)
+
+gini_2 = Gini(clients_profils_sans_outliers$montant_total)
+print(gini_2)
+```
+
+Le résultat de l'indice de gini et la courbe de lorenz indiquent qu'une minorité de clients génère une part importante du chiffres d'affaires.
+
+Quand on enlève les 4 outliers, l'indice de gini est un peu plus faible.
+
+### Les corrélations
+
+###### Lien entre le genre d'un client et les catégories de livres achetés
+
+```{r}
+df_alldata %>%
+  group_by(sex) %>%
+  summarise(nb_lignes = n())
+```
+
+Il y a plus d'hommes que de femmes.
+
+```{r}
+df_sex_categ <- df_alldata %>%
+  group_by(sex, categ) %>%
+  summarise(count = n())
+```
+
+Extraction de la taille du plus petit groupe (celui des femmes)
+
+```{r}
+min_size <- df_alldata %>%
+ count(sex) %>%
+ pull(n) %>%
+ min()      
+```
+
+Echantillonner le même nombre de lignes pour chaque sexe (hasard)
+
+```{r}
+df_sex_categ <- df_alldata %>%
+  group_by(sex) %>%
+  slice_sample(n = min_size) %>%
+  ungroup() %>%
+  group_by(sex, categ) %>%
+  summarise(count = n(), .groups = "drop")
+```
+
+```{r}
+ggplot(df_sex_categ, aes(x = categ, y = count, fill = sex)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Catégories achetées selon le sexe",
+       x = "Catégorie", y = "Achats") +
+  theme_minimal()
+```
+
+Test du chi² de Pearson (pour les variables catégorielles comme ici)
+
+D'abord on fait un tableau de contingence :
+
+```{r}
+table_sex_categ <- xtabs(count ~ sex + categ, data = df_sex_categ)
+
+table_sex_categ
+```
+
+Les fréquences attendues si les deux variables avaient été indépendantes :
+
+```{r}
+chisq_test <- chisq.test(table_sex_categ)
+chisq_test$expected
+```
+
+Test chi2 :
+
+```{r}
+chisq.test(table_sex_categ)
+```
+
+Le p-value est très faible, alors il y a très probablement une association.
+
+Le X-squared sert à dire l'écart entre les fréquences observées et attendues : il est grand ici. Mais cela peut être dû à la taille très grande de l'échantillon.
+
+Pour connaître la force de la relation, on utilise le V de Cramer :
+
+```{r}
+assocstats(table_sex_categ)
+```
+
+Mais la relation entre sexe et catégorie achetée est très faible, car V de cramer proche de 0.
+
+###### Lien entre l'âge des clients et le montant du panier
+
+```{r}
+ggplot(clients_profils_sans_outliers, aes(x = age, y = montant_panier_moyen)) +
+  geom_point() +
+  labs(title = "Montant moyen des achats en fonction de l'âge",
+       x = "Âge",
+       y = "Montant moyen")
+```
+
+Test de normalité Kolmogorov-Smirnov (données supérieures à 5000 lignes donc shapiro impossible ici) :
+
+```{r}
+ks.test(clients_profils_sans_outliers$montant_panier_moyen, "pnorm", mean=mean(clients_profils_sans_outliers$montant_panier_moyen), sd=sd(clients_profils_sans_outliers$montant_panier_moyen))
+```
+
+P-value très < .0.05 Et la valeur D est éloignée de 0, le test rejette l'hypothèse nulle de normalité.
+
+Il faut faire un test non paramétrique comme spearman :
+
+```{r}
+cor.test(clients_profils_sans_outliers$age, clients_profils_sans_outliers$montant_panier_moyen, method = "spearman")
+```
+
+P-value très \< .0.05, la relation existe. Le rho est négatif ce qui signifie que quand l'âge augmente, le montant moyen dépensé diminue.
+
+0 = pas de relation -1 = relation forte négative +1 = relation forte positive
+
+Essayer avec des groupes d'âge :
+
+```{r}
+clients_profils_sans_outliers$age_group <- cut(
+  clients_profils_sans_outliers$age,
+  breaks = c(0, 30, 50, Inf),
+  labels = c("20-30", "30-50", "50+")
+)
+```
+
+```{r}
+ggplot(clients_profils_sans_outliers, aes(x = age_group, y = montant_panier_moyen)) +
+  geom_boxplot(fill = "lightgreen") +
+  labs(title = "Montant moyen du panier selon les groupes d'âge",
+       x = "Groupe d'âge",
+       y = "Montant moyen dépensé") +
+  theme_minimal()
+```
+
+```{r}
+kruskal <- kruskal.test(montant_panier_moyen ~ age_group, data = clients_profils_sans_outliers)
+kruskal
+```
+
+```{r}
+epsilon_squared <- (kruskal$statistic) / (length(clients_profils_sans_outliers$montant_panier_moyen) - 1)
+epsilon_squared
+```
+
+Relation forte également avec le test de Kruskal-Wallis.
+
+###### Lien entre l'âge des clients et montant total dépensé
+
+```{r}
+ggplot(clients_profils_sans_outliers, aes(x = age, y = montant_total)) +
+  geom_point() +
+  labs(title = "Montant total des achats en fonction de l'âge",
+       x = "Âge",
+       y = "Montant total")
+```
+
+Test de normalité Kolmogorov-Smirnov (données supérieures à 5000 lignes donc shapiro impossible ici) :
+
+```{r}
+ks.test(clients_profils_sans_outliers$montant_total, "pnorm", mean=mean(clients_profils_sans_outliers$montant_total), sd=sd(clients_profils_sans_outliers$montant_total))
+```
+
+P-value très \< .0.05 Et la valeur D est éloignée de 0, le test rejette l'hypothèse nulle de normalité.
+
+Il faut faire un test non paramétrique comme spearman :
+
+```{r}
+cor.test(clients_profils_sans_outliers$age, clients_profils_sans_outliers$montant_total, method = "spearman")
+```
+
+P-value très \< .0.05, la relation existe. Le rho est négatif ce qui signifie que quand l'âge augmente, le montant total diminue. Mais la relation est faible.
+
+0 = pas de relation -1 = relation forte négative +1 = relation forte positive
+
+Essayer avec des groupes d'âge :
+
+```{r}
+ggplot(clients_profils_sans_outliers, aes(x = age_group, y = montant_total)) +
+  geom_boxplot(fill = "lightgreen") +
+  labs(title = "Montant total selon les groupes d'âge",
+       x = "Groupe d'âge",
+       y = "Montant total dépensé") +
+  theme_minimal()
+```
+
+```{r}
+kruskal <- kruskal.test(montant_total ~ age_group, data = clients_profils_sans_outliers)
+kruskal
+```
+
+```{r}
+epsilon_squared <- (kruskal$statistic) / (length(clients_profils_sans_outliers$montant_total) - 1)
+epsilon_squared
+```
+
+Relation faible également avec le test de Kruskal-Wallis.
+
+5% de la variance obsevée est due à la différence entre les groupes.
+
+###### Lien entre l'âge des clients et la fréquence d'achat
+
+```{r}
+ggplot(clients_profils_sans_outliers, aes(x = age, y = nb_transactions)) +
+  geom_point(alpha = 0.3) +
+  labs(title = "Fréquence d'achat en fonction de l'âge",
+       x = "Âge",
+       y = "Nombre de d'achats") +
+  theme_minimal()
+```
+
+Il semble y avoir une tendance non linéaire avec une fréquence d'achat plus haute entre 30 et 50 ans.
+
+```{r}
+ks.test(clients_profils_sans_outliers$nb_transactions, "pnorm", mean=mean(clients_profils_sans_outliers$nb_transactions), sd=sd(clients_profils_sans_outliers$nb_transactions))
+```
+
+D très éloigné de 1 et p-value faible. Les données s'écartent totalement de la normalité.
+
+Mais on ne va pas utiliser spearman car la relation n'est pas monotone (ça monte puis ça redescend)
+
+Test de Kruskal-Wallis, qui permet de savoir si au moins un groupe d'âge a une fréquence d'achat différente des autres :
+
+```{r}
+kruskal.test(nb_transactions ~ age_group, data = clients_profils_sans_outliers)
+```
+
+La différence entre groupes est significative.
+
+Pour savoir la force, il faut calculer l'effet de taille :
+
+```{r}
+epsilon_squared <- 1528.1 / 8596 #nombre d'observations
+epsilon_squared
+```
+
+Signifie que 18% de la variance des rangs est expliquée par les groupes d'âge, donc l'âge a un impact sur la fréquence d'achat.
+
+```{r}
+ggplot(clients_profils_sans_outliers, aes(x = age_group, y = nb_transactions)) +
+  geom_boxplot(fill = "lightgreen") +
+  labs(title = "Fréquence d'achat selon les groupes d'âge",
+       x = "Groupe d'âge",
+       y = "Nombre de transactions") +
+  theme_minimal()
+```
+
+```{r}
+
+leveneTest(nb_transactions ~ age_group, data = clients_profils_sans_outliers)
+```
+
+Le test de levene montre des variances très différentes entre les groupes.
+
+```{r}
+dunnTest(nb_transactions ~ age_group, data = clients_profils_sans_outliers, method = "bonferroni")
+```
+
+###### Lien entre l'âge des clients et la taille du panier moyen
+
+Ajout d'une colonne pour la taille du panier moyen :
+
+```{r}
+clients_profils_sans_outliers <- clients_profils_sans_outliers %>%
+  left_join(
+    df_alldata_v2 %>%
+      group_by(client_id, session_id) %>%
+      summarise(nb_produits = n(), .groups = "drop") %>%
+      group_by(client_id) %>%
+      summarise(taille_panier_moyen = mean(nb_produits), .groups = "drop"),
+    by = "client_id"
+  )
+```
+
+```{r}
+ggplot(clients_profils_sans_outliers, aes(x = age, y = taille_panier_moyen)) +
+  geom_point(alpha = 0.3) +
+  labs(title = "Taille panier moyen",
+       x = "Âge",
+       y = "Panier Moyen") +
+  theme_minimal()
+```
+
+```{r}
+ggplot(clients_profils_sans_outliers, aes(x = age_group, y = taille_panier_moyen)) +
+  geom_boxplot(fill = "lightgreen") +
+  labs(title = "Taille du panier moyen",
+       x = "Âge",
+       y = "Taille du panier") +
+  theme_minimal()
+```
+
+Entre 30 et 50 ans, le panier moyen a tendance a avoir une taille plus grande.
+
+```{r}
+kruskal.test(taille_panier_moyen ~ age_group, data = clients_profils_sans_outliers)
+```
+
+```{r}
+epsilon_squared <- 2299.7 / 8596 #nombre d'observations
+epsilon_squared
+```
+
+L'âge explique 26,8% de la variance de la taille moyenne du panier.
+
+###### Lien entre l'âge des clients et la catégorie des livres achetés
+
+```{r}
+df_alldata <- df_alldata %>%
+  mutate(age = as.numeric(format(Sys.Date(), "%Y")) - birth)
+```
+
+```{r}
+df_age_categ <- df_alldata %>%
+  group_by(age, categ) %>%
+  summarise(count = n())
+```
+
+Faire des groupes :
+
+```{r}
+df_age_categ$age_group <- cut(
+  df_age_categ$age,
+  breaks = c(0, 30, 50, Inf),
+  labels = c("20-30", "30-50", "50+")
+)
+```
+
+```{r}
+df_age_categ <- df_age_categ |>
+  group_by(age_group, categ) |>
+  summarise(
+    count = sum(count)
+  )
+```
+
+```{r}
+ggplot(df_age_categ, aes(x = age_group, y = count, fill = categ)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Catégories achetées selon l'âge",
+       x = "Groupe d'âge", y = "Nombre d'achats") +
+  theme_minimal()
+```
+
+Table de contingence
+
+```{r}
+table_age_categ <- xtabs(count ~ age_group + categ, data = df_age_categ)
+
+table_age_categ
+```
+
+Les fréquences attendues si les deux variables avaient été indépendantes :
+
+```{r}
+chisq_test <- chisq.test(table_age_categ)
+chisq_test$expected
+```
+
+Test chi2 :
+
+```{r}
+chisq.test(table_age_categ)
+```
+
+Il y a une relation entre l'âge et la catégorie achetée.
+
+```{r}
+assocstats(table_age_categ)
+```
+
+Le V de Cramer est au dessus de 0.4, la force de l'association est forte.
