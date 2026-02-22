@@ -2,14 +2,18 @@ Numero Projet;Competence;Description
 2;Donner des conseils stratégiques fondés sur les données;Expliquer la donnée à un public et donner des conseils stratégiques
 5;Concevoir une base de données robuste et évolutive;Schéma relationnel normalisé, data lake et datawarehouse
 6;Nettoyer les données pour garantir leur fiabilité;Corrections des données incohérentes, suppression lignes à null…
-6;Optimiser la gestion des données;Simplification des données
+6;Optimiser la gestion des données;Simplification des données à l’aide du feature engineering
 7;Mettre en place des mesures de sécurité robustes;Gestion des accès/rôles - Row-Level Security
 8;Mettre en place des mesures de sécurité robustes;Anonymisation des données client
-9;Mettre en place des techniques avancées d’analyse;Analyses univariées et multivariées
-10;Concevoir une base de données robuste et évolutive;Tests DBT pour assurer la qualité et la non régression
+9;Mettre en place des techniques avancées d’analyse;Analyses bivariées (Chi2, Kruskal-Wallis) pour confirmer les corrélations
+10;Concevoir une base de données robuste et évolutive;Utilisation de DBT pour structurer le pipeline et test de non-régression
+10;Optimiser la gestion des données;Modélisation en étoile dans BigQuery pour Power BI
 10;Préparer les indicateurs en amont;Calculs dans la base données SQL
 10;Transformer les indicateurs en outils d’aide à la décision;Création de graphiques informationnels
+10;Transformer les indicateurs en outils d’aide à la décision;Création d'un dashboard à niveaux pour facilter l’exploration
 11;Collecter et fusionner des données de sources diverses;Variables PESTEL collectées et fusionnées depuis trois sources différentes
+11;Transformer les indicateurs en outils d’aide à la décision;Réduction de dimension via ACP pour comprendre des variables nombreuses
+11;Donner des conseils stratégiques fondés sur les données;Segmentation des pays par Clustering pour identifier les marchés à fort potentiel
 12;Mettre en place des techniques avancées d’analyse;Création d’un modèle ML de détection des faux billets
 13;Effectuer une veille métier et technologique;Création d’un dashboard de veille métier alimenté par des flux RSS
 13;Comprendre les besoins métiers et identifier les enjeux;Formalisation d’un cahier des charges pour cadrer les besoins et solutions
